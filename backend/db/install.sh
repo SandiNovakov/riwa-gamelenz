@@ -1,10 +1,12 @@
 #!/bin/bash
 
-# --- connection podaci ---
-DB_HOST="student.veleri.hr"
-DB_USER="snovakov"
-DB_PASS="11"
-DB_NAME="snovakov"
+# Prompt for connection info
+read -p "Ime servera: " DB_HOST
+read -p "Ime baze: " DB_NAME
+read -p "Korisničko ime: " DB_USER
+read -s -p "Lozinka: " DB_PASS
+echo   # just a newline after password prompt
+
 
 SCRIPTS=(
   "create_tables.sql"
