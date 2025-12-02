@@ -1,19 +1,14 @@
-ALTER TABLE Igrica ADD CONSTRAINT V_developer
-FOREIGN KEY (ID_developera) REFERENCES Developer(ID_developera)
-ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE igrica add CONSTRAINT v_developer FOREIGN key (id_developera) REFERENCES developer (id_developera) ON DELETE restrict ON UPDATE cascade
+;
 
-ALTER TABLE Igrica ADD CONSTRAINT V_zanr
-FOREIGN KEY (ID_zanr) REFERENCES Zanr(ID_zanra)
-ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE igrica add CONSTRAINT v_zanr FOREIGN key (id_zanra) REFERENCES zanr (id_zanra) ON DELETE restrict ON UPDATE cascade
+;
 
-ALTER TABLE Igrica ADD CONSTRAINT V_izdavac
-FOREIGN KEY (ID_izdavac) REFERENCES Izdavac(ID_izdavaca)
-ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE igrica add CONSTRAINT v_izdavac FOREIGN key (id_izdavaca) REFERENCES izdavac (id_izdavaca) ON DELETE restrict ON UPDATE cascade
+;
 
-ALTER TABLE Igrica_Na_Listi ADD CONSTRAINT V_korisnik
-FOREIGN KEY (ID_korisnika) REFERENCES Korisnik(ID_korisnika)
-ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE igrica_na_listi add CONSTRAINT v_korisnik FOREIGN key (id_korisnika) REFERENCES korisnik (id_korisnika) ON DELETE restrict ON UPDATE cascade
+;
 
-ALTER TABLE Igrica_Na_Listi ADD CONSTRAINT V_igrica
-FOREIGN KEY (ID_igrice) REFERENCES Igrica(ID_igrice)
-ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE igrica_na_listi add CONSTRAINT v_igrica FOREIGN key (id_igrice) REFERENCES igrica (id_igrice) ON DELETE restrict ON UPDATE cascade
+;
