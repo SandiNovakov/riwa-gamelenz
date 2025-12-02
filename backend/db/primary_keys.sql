@@ -1,6 +1,17 @@
-ALTER TABLE Igrica ADD PRIMARY KEY (ID_igrice);
-ALTER TABLE Izdavac ADD PRIMARY KEY (ID_izdavaca);
-ALTER TABLE Developer ADD PRIMARY KEY (ID_developera);
-ALTER TABLE Korisnik ADD PRIMARY KEY (ID_korisnika);
-ALTER TABLE Zanr ADD PRIMARY KEY (ID_zanra);
-ALTER TABLE Igrica_Na_Listi ADD PRIMARY KEY (ID_korisnika, ID_igrice);
+ALTER TABLE igrica add PRIMARY key (id_igrice)
+;
+
+ALTER TABLE izdavac add PRIMARY key (id_izdavaca)
+;
+
+ALTER TABLE developer add PRIMARY key (id_developera)
+;
+
+ALTER TABLE korisnik add PRIMARY key (id_korisnika)
+;
+
+ALTER TABLE zanr add PRIMARY key (id_zanra)
+;
+
+ALTER TABLE igrica_na_listi add PRIMARY key (id_korisnika, id_igrice)
+;
