@@ -18,18 +18,18 @@ const pool = mariadb.createPool({
 // CREATE Korisnik
 app.post('/korisnici', async (req, res) => {
     const {
-        Korisnicko_ime,
-        Lozinka,
-        Email,
-        Privatni_racun,
+        korisnicko_ime,
+        lozinka,
+        email,
+        privatni_racun,
     } = req.body;
 
     const conn = await pool.getConnection();
     await conn.query(
-        `INSERT INTO Korisnik 
-     (Korisnicko_ime, Lozinka, Email, Privatni_racun)
+        `INSERT INTO korisnik 
+     (korisnicko_ime, lozinka, email, privatni_racun)
      VALUES (?, ?, ?, ?)`,
-        [Korisnicko_ime, Lozinka, Email, Privatni_racun]
+        [korisnicko_ime, lozinka, email, privatni_racun]
     );
     conn.release();
     res.send('Korisnik created');
@@ -38,7 +38,7 @@ app.post('/korisnici', async (req, res) => {
 // READ ALL korisnici
 app.get('/korisnici', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Korisnik');
+    const rows = await conn.query('SELECT * FROM korisnik');
     conn.release();
     res.json(rows);
 });
@@ -46,7 +46,7 @@ app.get('/korisnici', async (req, res) => {
 // READ ONE Korisnik
 app.get('/korisnici/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Korisnik WHERE ID_korisnika = ?', [req.params.id]);
+    const rows = await conn.query('SELECT * FROM korisnik WHERE id_korisnika = ?', [req.params.id]);
     conn.release();
     res.json(rows[0]);
 });
@@ -54,21 +54,21 @@ app.get('/korisnici/:id', async (req, res) => {
 // UPDATE Korisnik
 app.put('/korisnici/:id', async (req, res) => {
     const {
-        Korisnicko_ime,
-        Lozinka,
-        Email,
-        Privatni_racun,
+        korisnicko_ime,
+        lozinka,
+        email,
+        privatni_racun,
     } = req.body;
 
     const conn = await pool.getConnection();
     await conn.query(
-        `UPDATE Korisnik SET
-      Korisnicko_ime = ?,
-      Lozinka = ?,
-      Email = ?,
-      Privatni_racun = ?
-     WHERE ID_korisnika = ?`,
-        [Korisnicko_ime, Lozinka, Email, Privatni_racun, req.params.id]
+        `UPDATE korisnik SET
+      korisnicko_ime = ?,
+      lozinka = ?,
+      email = ?,
+      privatni_racun = ?
+     WHERE id_korisnika = ?`,
+        [korisnicko_ime, lozinka, email, privatni_racun, req.params.id]
     );
     conn.release();
     res.send('Korisnik updated');
@@ -77,7 +77,7 @@ app.put('/korisnici/:id', async (req, res) => {
 // DELETE Korisnik
 app.delete('/korisnici/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    await conn.query('DELETE FROM Korisnik WHERE ID_korisnika = ?', [req.params.id]);
+    await conn.query('DELETE FROM korisnik WHERE id_korisnika = ?', [req.params.id]);
     conn.release();
     res.send('Korisnik deleted');
 });
@@ -85,20 +85,20 @@ app.delete('/korisnici/:id', async (req, res) => {
 // CREATE igrice
 app.post('/igrice', async (req, res) => {
     const {
-        Naziv_igrice,
-        Opis,
-        Datum_izdanja,
-        ID_izdavaca,
-        ID_developera,
-        ID_zanra
+        naziv_igrice,
+        opis,
+        datum_izdanja,
+        id_izdavaca,
+        id_developera,
+        id_zanra
     } = req.body;
 
     const conn = await pool.getConnection();
     await conn.query(
-        `INSERT INTO Igrica
-     (Naziv_igrice, Opis, Datum_izdanja, ID_izdavaca, ID_developera, ID_zanra)
+        `INSERT INTO igrica
+     (naziv_igrice, opis, datum_izdanja, id_izdavaca, id_developera, id_zanra)
      VALUES (?, ?, ?, ?, ?, ?)`,
-        [Naziv_igrice, Opis, Datum_izdanja, ID_izdavaca, ID_developera, ID_zanra]
+        [naziv_igrice, opis, datum_izdanja, id_izdavaca, id_developera, id_zanra]
     );
     conn.release();
     res.send('Igrica created');
@@ -107,7 +107,7 @@ app.post('/igrice', async (req, res) => {
 // READ ALL igrice
 app.get('/igrice', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Igrica');
+    const rows = await conn.query('SELECT * FROM igrica');
     conn.release();
     res.json(rows);
 });
@@ -115,7 +115,7 @@ app.get('/igrice', async (req, res) => {
 // READ ONE Igrica
 app.get('/igrice/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Igrica WHERE ID_igrice = ?', [req.params.id]);
+    const rows = await conn.query('SELECT * FROM igrica WHERE id_igrice = ?', [req.params.id]);
     conn.release();
     res.json(rows[0]);
 });
@@ -123,25 +123,25 @@ app.get('/igrice/:id', async (req, res) => {
 // UPDATE Igrica
 app.put('/igrice/:id', async (req, res) => {
     const {
-        Naziv_igrice,
-        Opis,
-        Datum_izdanja,
-        ID_izdavaca,
-        ID_developera,
-        ID_zanra
+        naziv_igrice,
+        opis,
+        datum_izdanja,
+        id_izdavaca,
+        id_developera,
+        id_zanra
     } = req.body;
 
     const conn = await pool.getConnection();
     await conn.query(
-        `UPDATE Igrica SET
-      Naziv_igrice = ?,
-      Opis = ?,
-      Datum_izdanja = ?,
-      ID_izdavaca = ?,
-      ID_developera = ?,
-      ID_zanra = ?
-     WHERE ID_igrice = ?`,
-        [Naziv_igrice, Opis, Datum_izdanja, ID_izdavaca, ID_developera, ID_zanra, req.params.id]
+        `UPDATE igrica SET
+      naziv_igrice = ?,
+      opis = ?,
+      datum_izdanja = ?,
+      id_izdavaca = ?,
+      id_developera = ?,
+      id_zanra = ?
+     WHERE id_igrice = ?`,
+        [naziv_igrice, opis, datum_izdanja, id_izdavaca, id_developera, id_zanra, req.params.id]
     );
     conn.release();
     res.send('Igrica updated');
@@ -150,20 +150,20 @@ app.put('/igrice/:id', async (req, res) => {
 // DELETE Igrica
 app.delete('/igrice/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    await conn.query('DELETE FROM Igrica WHERE ID_igrice = ?', [req.params.id]);
+    await conn.query('DELETE FROM igrica WHERE id_igrice = ?', [req.params.id]);
     conn.release();
     res.send('Igrica deleted');
 });
 
 // CREATE (add game to user's list)
 app.post('/liste', async (req, res) => {
-    const Datum_dodavanja = new Date().toISOString().split('T')[0];
+    const datum_dodavanja = new Date().toISOString().split('T')[0];
     const {
-        ID_korisnika,
-        ID_igrice,
-        Ocjena,
-        Komentar,
-        Status
+        id_korisnika,
+        id_igrice,
+        ocjena,
+        komentar,
+        status
     } = req.body;
 
     const conn = await pool.getConnection();
@@ -173,26 +173,26 @@ app.post('/liste', async (req, res) => {
 
         // Insert into Igrica_na_listi
         await conn.query(
-            `INSERT INTO Igrica_na_listi
-       (ID_korisnika, ID_igrice, Datum_dodavanja, Ocjena, Komentar, Status)
+            `INSERT INTO igrica_na_listi
+       (id_korisnika, id_igrice, datum_dodavanja, ocjena, komentar, status)
        VALUES (?, ?, ?, ?, ?, ?)`,
-            [ID_korisnika, ID_igrice, Datum_dodavanja, Ocjena, Komentar, Status]
+            [id_korisnika, id_igrice, datum_dodavanja, ocjena, komentar, status]
         );
 
         // Update Igrica.Broj_dodavanja_na_listu
         await conn.query(
-            `UPDATE Igrica
-       SET Broj_dodavanja_na_listu = Broj_dodavanja_na_listu + 1
-       WHERE ID_igrice = ?`,
-            [ID_igrice]
+            `UPDATE igrica
+       SET broj_dodavanja_na_listu = broj_dodavanja_na_listu + 1
+       WHERE id_igrice = ?`,
+            [id_igrice]
         );
 
         // Update Korisnik.Broj_igrica_na_listi
         await conn.query(
-            `UPDATE Korisnik
-       SET Broj_igrica_na_listi = Broj_igrica_na_listi + 1
-       WHERE ID_korisnika = ?`,
-            [ID_korisnika]
+            `UPDATE korisnik
+       SET broj_igrica_na_listi = broj_igrica_na_listi + 1
+       WHERE id_korisnika = ?`,
+            [id_korisnika]
         );
 
         await conn.commit();
@@ -209,7 +209,7 @@ app.post('/liste', async (req, res) => {
 // READ ALL (entire table)
 app.get('/liste', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Igrica_na_listi');
+    const rows = await conn.query('SELECT * FROM igrica_na_listi');
     conn.release();
     res.json(rows);
 });
@@ -219,7 +219,7 @@ app.get('/liste/:userId/:gameId', async (req, res) => {
     const { userId, gameId } = req.params;
     const conn = await pool.getConnection();
     const rows = await conn.query(
-        'SELECT * FROM Igrica_na_listi WHERE ID_korisnika = ? AND ID_igrice = ?',
+        'SELECT * FROM igrica_na_listi WHERE id_korisnika = ? AND id_igrice = ?',
         [userId, gameId]
     );
     conn.release();
@@ -236,14 +236,14 @@ app.get('/liste/:userId', async (req, res) => {
         const rows = await conn.query(
             `SELECT 
         il.*, 
-        i.Naziv_igrice,
-        i.Opis AS Opis_igrice,
-        i.Datum_izdanja,
-        z.Naziv_zanra
-       FROM Igrica_na_listi il
-       JOIN Igrica i ON il.ID_igrice = i.ID_igrice
-       LEFT JOIN Zanr z ON i.ID_zanra = z.ID_zanra
-       WHERE il.ID_korisnika = ?`,
+        i.naziv_igrice,
+        i.opis AS opis_igrice,
+        i.datum_izdanja,
+        z.naziv_zanra
+       FROM igrica_na_listi il
+       JOIN igrica i ON il.id_igrice = i.id_igrice
+       LEFT JOIN zanr z ON i.id_zanra = z.id_zanra
+       WHERE il.id_korisnika = ?`,
             [userId]
         );
 
@@ -260,21 +260,21 @@ app.get('/liste/:userId', async (req, res) => {
 app.put('/liste/:userId/:gameId', async (req, res) => {
     const { userId, gameId } = req.params;
     const {
-        Datum_dodavanja,
-        Ocjena,
-        Komentar,
-        Status
+        datum_dodavanja,
+        ocjena,
+        komentar,
+        status
     } = req.body;
 
     const conn = await pool.getConnection();
     await conn.query(
-        `UPDATE Igrica_na_listi SET
-      Datum_dodavanja = ?,
-      Ocjena = ?,
-      Komentar = ?,
-      Status = ?
-     WHERE ID_korisnika = ? AND ID_igrice = ?`,
-        [Datum_dodavanja, Ocjena, Komentar, Status, userId, gameId]
+        `UPDATE igrica_na_listi SET
+      datum_dodavanja = ?,
+      ocjena = ?,
+      komentar = ?,
+      status = ?
+     WHERE id_korisnika = ? AND id_igrice = ?`,
+        [datum_dodavanja, ocjena, komentar, status, userId, gameId]
     );
     conn.release();
     res.send('Entry updated');
@@ -289,7 +289,7 @@ app.delete('/liste/:userId/:gameId', async (req, res) => {
 
         // Delete the entry from Igrica_na_listi
         const result = await conn.query(
-            'DELETE FROM Igrica_na_listi WHERE ID_korisnika = ? AND ID_igrice = ?',
+            'DELETE FROM igrica_na_listi WHERE id_korisnika = ? AND id_igrice = ?',
             [userId, gameId]
         );
 
@@ -300,17 +300,17 @@ app.delete('/liste/:userId/:gameId', async (req, res) => {
 
         // Decrement Igrica.Broj_dodavanja_na_listu
         await conn.query(
-            `UPDATE Igrica
-       SET Broj_dodavanja_na_listu = GREATEST(Broj_dodavanja_na_listu - 1, 0)
-       WHERE ID_igrice = ?`,
+            `UPDATE igrica
+       SET broj_dodavanja_na_listu = GREATEST(broj_dodavanja_na_listu - 1, 0)
+       WHERE id_igrice = ?`,
             [gameId]
         );
 
         // Decrement Korisnik.Broj_igrica_na_listi
         await conn.query(
-            `UPDATE Korisnik
-       SET Broj_igrica_na_listi = GREATEST(Broj_igrica_na_listi - 1, 0)
-       WHERE ID_korisnika = ?`,
+            `UPDATE korisnik
+       SET broj_igrica_na_listi = GREATEST(broj_igrica_na_listi - 1, 0)
+       WHERE id_korisnika = ?`,
             [userId]
         );
 
@@ -328,9 +328,9 @@ app.delete('/liste/:userId/:gameId', async (req, res) => {
 
 // CREATE Zanr
 app.post('/zanrovi', async (req, res) => {
-    const { Naziv_zanra } = req.body;
+    const { naziv_zanra } = req.body;
     const conn = await pool.getConnection();
-    await conn.query('INSERT INTO Zanr (Naziv_zanra) VALUES (?)', [Naziv_zanra]);
+    await conn.query('INSERT INTO zanr (naziv_zanra) VALUES (?)', [naziv_zanra]);
     conn.release();
     res.send('Zanr created');
 });
@@ -338,7 +338,7 @@ app.post('/zanrovi', async (req, res) => {
 // READ ALL zanrovi
 app.get('/zanrovi', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Zanr');
+    const rows = await conn.query('SELECT * FROM zanr');
     conn.release();
     res.json(rows);
 });
@@ -346,16 +346,16 @@ app.get('/zanrovi', async (req, res) => {
 // READ ONE Zanr
 app.get('/zanrovi/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Zanr WHERE ID_zanra = ?', [req.params.id]);
+    const rows = await conn.query('SELECT * FROM zanr WHERE id_zanra = ?', [req.params.id]);
     conn.release();
     res.json(rows[0]);
 });
 
 // UPDATE Zanr
 app.put('/zanrovi/:id', async (req, res) => {
-    const { Naziv_zanra } = req.body;
+    const { naziv_zanra } = req.body;
     const conn = await pool.getConnection();
-    await conn.query('UPDATE Zanr SET Naziv_zanra = ? WHERE ID_zanra = ?', [Naziv_zanra, req.params.id]);
+    await conn.query('UPDATE zanr SET naziv_zanra = ? WHERE id_zanra = ?', [naziv_zanra, req.params.id]);
     conn.release();
     res.send('Zanr updated');
 });
@@ -363,130 +363,130 @@ app.put('/zanrovi/:id', async (req, res) => {
 // DELETE Zanr
 app.delete('/zanrovi/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    await conn.query('DELETE FROM Zanr WHERE ID_zanra = ?', [req.params.id]);
+    await conn.query('DELETE FROM zanr WHERE id_zanra = ?', [req.params.id]);
     conn.release();
     res.send('Zanr deleted');
 });
 
 
 app.post('/izdavaci', async (req, res) => {
-    const { Naziv_izdavaca } = req.body;
+    const { naziv_izdavaca } = req.body;
     const conn = await pool.getConnection();
-    await conn.query('INSERT INTO Izdavac (Naziv_izdavaca) VALUES (?)', [Naziv_izdavaca]);
+    await conn.query('INSERT INTO izdavac (naziv_izdavaca) VALUES (?)', [naziv_izdavaca]);
     conn.release();
     res.send('Izdavac created');
 });
 
 app.get('/izdavaci', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Izdavac');
+    const rows = await conn.query('SELECT * FROM izdavac');
     conn.release();
     res.json(rows);
 });
 
 app.get('/izdavaci/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Izdavac WHERE ID_izdavaca = ?', [req.params.id]);
+    const rows = await conn.query('SELECT * FROM izdavac WHERE id_izdavaca = ?', [req.params.id]);
     conn.release();
     res.json(rows[0]);
 });
 
 app.put('/izdavaci/:id', async (req, res) => {
-    const { Naziv_izdavaca } = req.body;
+    const { naziv_izdavaca } = req.body;
     const conn = await pool.getConnection();
-    await conn.query('UPDATE Izdavac SET Naziv_izdavaca = ? WHERE ID_izdavaca = ?', [Naziv_izdavaca, req.params.id]);
+    await conn.query('UPDATE izdavac SET naziv_izdavaca = ? WHERE id_izdavaca = ?', [naziv_izdavaca, req.params.id]);
     conn.release();
     res.send('Izdavac updated');
 });
 
 app.delete('/izdavaci/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    await conn.query('DELETE FROM Izdavac WHERE ID_izdavaca = ?', [req.params.id]);
+    await conn.query('DELETE FROM izdavac WHERE id_izdavaca = ?', [req.params.id]);
     conn.release();
     res.send('Izdavac deleted');
 });
 
 app.post('/developeri', async (req, res) => {
-    const { Naziv_developera } = req.body;
+    const { naziv_developera } = req.body;
     const conn = await pool.getConnection();
-    await conn.query('INSERT INTO Developer (Naziv_developera) VALUES (?)', [Naziv_developera]);
+    await conn.query('INSERT INTO developer (naziv_developera) VALUES (?)', [naziv_developera]);
     conn.release();
     res.send('Developer created');
 });
 
 app.get('/developeri', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Developer');
+    const rows = await conn.query('SELECT * FROM developer');
     conn.release();
     res.json(rows);
 });
 
 app.get('/developeri/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Developer WHERE ID_developera = ?', [req.params.id]);
+    const rows = await conn.query('SELECT * FROM developer WHERE id_developera = ?', [req.params.id]);
     conn.release();
     res.json(rows[0]);
 });
 
 app.put('/developeri/:id', async (req, res) => {
-    const { Naziv_developera } = req.body;
+    const { naziv_developera } = req.body;
     const conn = await pool.getConnection();
-    await conn.query('UPDATE Developer SET Naziv_developera = ? WHERE ID_developera = ?', [Naziv_developera, req.params.id]);
+    await conn.query('UPDATE developer SET naziv_developera = ? WHERE id_developera = ?', [naziv_developera, req.params.id]);
     conn.release();
     res.send('Developer updated');
 });
 
 app.delete('/developeri/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    await conn.query('DELETE FROM Developer WHERE ID_developera = ?', [req.params.id]);
+    await conn.query('DELETE FROM developer WHERE id_developera = ?', [req.params.id]);
     conn.release();
     res.send('Developer deleted');
 });
 
 app.post('/platforme', async (req, res) => {
-    const { Naziv_platforme } = req.body;
+    const { naziv_platforme } = req.body;
     const conn = await pool.getConnection();
-    await conn.query('INSERT INTO Platforma (Naziv_platforme) VALUES (?)', [Naziv_platforme]);
+    await conn.query('INSERT INTO platforma (naziv_platforme) VALUES (?)', [naziv_platforme]);
     conn.release();
     res.send('Platforma created');
 });
 
 app.get('/platforme', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Platforma');
+    const rows = await conn.query('SELECT * FROM platforma');
     conn.release();
     res.json(rows);
 });
 
 app.get('/platforme/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Platforma WHERE ID_platforme = ?', [req.params.id]);
+    const rows = await conn.query('SELECT * FROM platforma WHERE id_platforme = ?', [req.params.id]);
     conn.release();
     res.json(rows[0]);
 });
 
 app.put('/platforme/:id', async (req, res) => {
-    const { Naziv_platforme } = req.body;
+    const { naziv_platforme } = req.body;
     const conn = await pool.getConnection();
-    await conn.query('UPDATE Platforma SET Naziv_platforme = ? WHERE ID_platforme = ?', [Naziv_platforme, req.params.id]);
+    await conn.query('UPDATE platforma SET naziv_platforme = ? WHERE id_platforme = ?', [naziv_platforme, req.params.id]);
     conn.release();
     res.send('Platforma updated');
 });
 
 app.delete('/platforme/:id', async (req, res) => {
     const conn = await pool.getConnection();
-    await conn.query('DELETE FROM Platforma WHERE ID_platforme = ?', [req.params.id]);
+    await conn.query('DELETE FROM platforma WHERE id_platforme = ?', [req.params.id]);
     conn.release();
     res.send('Platforma deleted');
 });
 
 // CREATE – povezi igricu s platformom
 app.post('/igrice-platforme', async (req, res) => {
-    const { ID_igrice, ID_platforme } = req.body;
+    const { id_igrice, id_platforme } = req.body;
     const conn = await pool.getConnection();
     await conn.query(
-        'INSERT INTO Igrica_na_platformi (ID_igrice, ID_platforme) VALUES (?, ?)',
-        [ID_igrice, ID_platforme]
+        'INSERT INTO igrica_na_platformi (id_igrice, id_platforme) VALUES (?, ?)',
+        [id_igrice, id_platforme]
     );
     conn.release();
     res.send('Veza Igrica-Platforma dodana');
@@ -495,7 +495,7 @@ app.post('/igrice-platforme', async (req, res) => {
 // READ ALL – sve veze Igrica-Platforma
 app.get('/igrice-platforme', async (req, res) => {
     const conn = await pool.getConnection();
-    const rows = await conn.query('SELECT * FROM Igrica_na_platformi');
+    const rows = await conn.query('SELECT * FROM igrica_na_platformi');
     conn.release();
     res.json(rows);
 });
@@ -505,7 +505,7 @@ app.get('/igrice-platforme/:igricaId/:platformaId', async (req, res) => {
     const { igricaId, platformaId } = req.params;
     const conn = await pool.getConnection();
     const rows = await conn.query(
-        'SELECT * FROM Igrica_na_platformi WHERE ID_igrice = ? AND ID_platforme = ?',
+        'SELECT * FROM igrica_na_platformi WHERE id_igrice = ? AND id_platforme = ?',
         [igricaId, platformaId]
     );
     conn.release();
@@ -517,7 +517,7 @@ app.delete('/igrice-platforme/:igricaId/:platformaId', async (req, res) => {
   const { igricaId, platformaId } = req.params;
   const conn = await pool.getConnection();
   await conn.query(
-    'DELETE FROM Igrica_na_platformi WHERE ID_igrice = ? AND ID_platforme = ?',
+    'DELETE FROM igrica_na_platformi WHERE id_igrice = ? AND id_platforme = ?',
     [igricaId, platformaId]
   );
   conn.release();
@@ -531,27 +531,27 @@ app.get('/igrice/detalji/:id', async (req, res) => {
     try {
         const [rows] = await conn.query(`
 SELECT 
-    i.ID_igrice,
-    i.Naziv_igrice,
-    i.Opis,
-    i.Datum_izdanja,
-    i.Prosjecna_ocjena,
-    i.Broj_dodavanja_na_listu,
-    z.Naziv_zanra AS Zanr,
-    izd.Naziv_izdavaca AS Izdavac,
-    dev.Naziv_developera AS Developer,
+    i.id_igrice,
+    i.naziv_igrice,
+    i.opis,
+    i.datum_izdanja,
+    i.prosjecna_ocjena,
+    i.broj_dodavanja_na_listu,
+    z.naziv_zanra AS zanr,
+    izd.naziv_izdavaca AS izdavac,
+    dev.naziv_developera AS developer,
     
-    (SELECT GROUP_CONCAT(p.Naziv_platforme SEPARATOR ', ')
-        FROM Platforma p
-        JOIN Igrica_na_platformi ip ON p.ID_platforme = ip.ID_platforme
-        WHERE ip.ID_igrice = i.ID_igrice
-    ) AS Platforme
+    (SELECT GROUP_CONCAT(p.naziv_platforme SEPARATOR ', ')
+        FROM platforma p
+        JOIN igrica_na_platformi ip ON p.id_platforme = ip.id_platforme
+        WHERE ip.id_igrice = i.id_igrice
+    ) AS platforme
 
-FROM Igrica i
-LEFT JOIN Zanr z ON i.ID_zanra = z.ID_zanra
-LEFT JOIN Izdavac izd ON i.ID_izdavaca = izd.ID_izdavaca
-LEFT JOIN Developer dev ON i.ID_developera = dev.ID_developera
-WHERE i.ID_igrice = ?
+FROM igrica i
+LEFT JOIN zanr z ON i.id_zanra = z.id_zanra
+LEFT JOIN izdavac izd ON i.id_izdavaca = izd.id_izdavaca
+LEFT JOIN developer dev ON i.id_developera = dev.id_developera
+WHERE i.id_igrice = ?
     `, [id, id]);
         if (!rows || rows.length === 0) {
             return res.status(404).json({ message: 'Igrica nije pronađena.' });
@@ -575,17 +575,17 @@ app.put('/igrice/:id/prosjecna-ocjena', async (req, res) => {
     try {
         // 1. Get average rating
         const [rows] = await conn.query(`
-            SELECT AVG(inl.Ocjena) AS prosjek
-            FROM Igrica_na_listi inl
-            JOIN Korisnik k ON inl.ID_korisnika = k.ID_korisnika
-            WHERE inl.ID_igrice = ? AND k.Privatni_racun = FALSE AND inl.Ocjena IS NOT NULL
+            SELECT AVG(inl.ocjena) AS prosjek
+            FROM igrica_na_listi inl
+            JOIN korisnik k ON inl.id_korisnika = k.id_korisnika
+            WHERE inl.id_igrice = ? AND k.privatni_racun = FALSE AND inl.ocjena IS NOT NULL
         `, [id]);
 
         // 2. Update average rating in Igrica table
         await conn.query(`
-            UPDATE Igrica 
-            SET Prosjecna_ocjena = ? 
-            WHERE ID_igrice = ?
+            UPDATE igrica 
+            SET prosjecna_ocjena = ? 
+            WHERE id_igrice = ?
         `, [rows.prosjek, id]);
         res.json({ 
             message: 'Prosjecna ocjena azurirana.', 
