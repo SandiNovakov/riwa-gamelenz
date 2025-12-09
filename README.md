@@ -2,6 +2,7 @@
 Aplikacija napravljena u Quasar.js-u za korištenje GameLenz sustava. Sadrži API, skripte za postavljanje baze, te frontend u Quasar-u.
 
 ## Upute za instaliranje baze:
+**VAŽNO**: Ovo radite samo jednom i samo ako želite imati vlastitu kopiju baze. U protivnom koristite nečiju postojeću bazu pa ovaj korak možete zanemariti.
 ### HeidiSQL
 1. Klonirajte repozitorij: `git clone https://github.com/SandiNovakov/riwa-gamelenz`.
 2. Pozicionirajte se u `riwa-gamelenz/backend/db/`.
