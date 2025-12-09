@@ -22,10 +22,6 @@ Aplikacija napravljena u Quasar.js-u za korištenje GameLenz sustava. Sadrži AP
 5. Upišite potrebne informacije: server, ime baze, korisničko ime, lozinku.
 6. Baza je uspješno instalirana.
 
-Prikaz ispravno pokrenute skripte:
-
-<img width="300" height="250" alt="image" src="https://github.com/user-attachments/assets/a7afafab-321d-475a-b2a4-233375d23fa7" />
-
 ## Upute za pokretanje API-ja:
 Prije svega, potrebno je imati instaliran i postavljen [Node.js](https://nodejs.org/en) na vašem računalu.
 
