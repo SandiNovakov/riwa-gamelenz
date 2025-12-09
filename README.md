@@ -17,6 +17,7 @@ Prikaz ispravno pokrenute skripte:
 Prije svega, potrebno je imati instaliran i postavljen Node.js na vašem računalu.
 
 1. Navigirajte do `riwa-gamelenz/backend/api/`.
-2. U datoteci `.env` upišite potrebne podatke za spajanje na vašu bazu (isti kao i za instalaciju baze).
-3. Vratite se u terminal i u *istom* folderu i pokrenite komandu `npm i express mariadb dotenv`.
-4. Nakon što je npm uspješno instalirao potrebne dodatke, moguće je pokrenuti server koristeći `node app.js`.
+2. Datoteku `.env.example` kopirajte i preimenujte u `.env`.
+3. U novoj datoteci `.env` upišite potrebne podatke za spajanje na vašu bazu (isti kao i za instalaciju baze).
+4. Vratite se u terminal i u *istom* folderu pokrenite komandu `npm i express mariadb dotenv`.
+5. Nakon što je npm uspješno instalirao potrebne dodatke, moguće je pokrenuti server koristeći `node app.js`.
