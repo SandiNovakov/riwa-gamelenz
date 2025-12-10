@@ -1,6 +1,16 @@
 # GameLenz Quasar aplikacija
 Aplikacija napravljena u Quasar.js-u za korištenje GameLenz sustava. Sadrži API, skripte za postavljanje baze, te frontend u Quasar-u.
 
+## Upute za developere:
+### Rad s git-om
+Imamo osmišljen način rada s git-om kako bi izbjegli konflikte što je više moguće—pročitajte `pravila_git.md`.
+### Rad na projektu
+Pogledajte što sve treba izraditi u `plan_izrade_projekta.md`.
+### Testiranje projekta
+Ako želite imati vlastitu bazu za testiranje, pogledajte sekciju "Upute za instaliranje baze".
+
+Za pokretanje API-ja, pogledajte sekciju "Upute za pokretanje API-ja".
+
 ## Upute za instaliranje baze:
 **VAŽNO**: Ovo radite samo jednom i samo ako želite imati vlastitu kopiju baze. U protivnom koristite nečiju postojeću bazu pa ovaj korak možete zanemariti.
 ### HeidiSQL
@@ -26,7 +36,7 @@ Aplikacija napravljena u Quasar.js-u za korištenje GameLenz sustava. Sadrži AP
 Prije svega, potrebno je imati instaliran i postavljen [Node.js](https://nodejs.org/en) na vašem računalu.
 
 1. Navigirajte do `riwa-gamelenz/backend/api/`.
-2. Datoteku `.env.example` kopirajte i preimenujte u `.env`.
+2. Datoteku `.env.example` kopirajte i preimenujte u `.env`. **VAŽNO**: Obavezno kopirajte `.env.example` datoteku. Nemojte ju samo preimenovati niti obrisati, jer ćete ju tako obrisati iz repozitorija na GitHub-u.
 3. U novoj datoteci `.env` upišite potrebne podatke za spajanje na vašu bazu (isti kao i za instalaciju baze).
 4. Vratite se u terminal i u *istom* folderu pokrenite komandu `npm i express mariadb dotenv`.
 5. Nakon što je npm uspješno instalirao potrebne dodatke, moguće je pokrenuti server koristeći `node app.js`.
