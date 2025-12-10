@@ -13,6 +13,8 @@ Za pokretanje API-ja, pogledajte sekciju "Upute za pokretanje API-ja".
 
 ## Upute za instaliranje baze:
 **VAŽNO**: Ovo radite samo jednom i samo ako želite imati vlastitu kopiju baze. U protivnom koristite nečiju postojeću bazu pa ovaj korak možete zanemariti.
+
+Bazu instalirate koristeći jednu od sljedećih metoda:
 ### HeidiSQL
 1. Klonirajte repozitorij: `git clone https://github.com/SandiNovakov/riwa-gamelenz`.
 2. Pozicionirajte se u `riwa-gamelenz/backend/db/`.
