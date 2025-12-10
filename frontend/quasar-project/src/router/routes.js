@@ -1,11 +1,12 @@
+
 const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/IndexPage.vue') },
-      { path: 'registracija', component: () => import('pages/RegistracijaPage.vue') }
-    ]
+      { path: 'dodaj-igru', component: () => import('pages/DodavanjeIgrice.vue') },
+      { path: 'add-game/:id', component: () => import('pages/AddGame.vue')}   ]
   },
 
   // Always leave this as last one,
