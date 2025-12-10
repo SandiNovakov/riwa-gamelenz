@@ -32,13 +32,11 @@
         label="Komentar"
       />
 
-      <q-btn label="Spremi" color="primary" @click="saveGame" class="full-width" />
+    
+      <q-btn label="Spremi2" color="primary" @click="saveGame2" class="full-width" />
     </div>
 
-    <!-- prikaz vrijednosti radi provjere -->
-    <div class="q-mt-lg">
-      <pre>{{ users }}</pre>
-    </div>
+    
   </q-page>
 </template>
 
@@ -50,7 +48,7 @@ const ocjena = ref("")
 const status = ref('planirano')
 const komentar = ref("")
 const gameName = ref("Učitavanje...")
-const users = ref([])
+
 
 const route = useRoute()
 const gameId = route.params.id
@@ -60,7 +58,7 @@ const gameId = route.params.id
 
 const getGameName = async () => {
   try {
-    const res = await api.get(`/igrice/${gameId}`) // GET /users
+    const res = await api.get(`/igrice/${gameId}`)
     gameName.value = res.data.naziv_igrice
     console.log(res.data)
   } catch (err) {
@@ -68,10 +66,10 @@ const getGameName = async () => {
   }
 }
 
-// poziv obje funkcije kad se stranica učita
+
 onMounted(async () => {
   await getGameName()
-  
+
 })
 
 const ocjenaOptions = [
@@ -89,8 +87,22 @@ const statusOptions = [
   { label: 'Završeno', value: 'završeno' }
 ]
 
-const saveGame = () => {
-  console.log('FORMA:', ocjena.value, status.value, komentar.value)
-  alert('Forma poslana! Pogledaj console.')
+
+async function saveGame2() {
+  try {
+    const res = await api.post('/liste', { 
+      id_korisnika: 1,
+      id_igrice: gameId,
+      ocjena: ocjena.value,
+      status: status.value,
+      komentar: komentar.value
+    })
+    console.log(res.data)
+    alert('Podaci su uspješno spremljeni!')
+  } catch (err) {
+    console.error(err)
+    alert('Došlo je do greške pri spremanju!')
+  }
 }
+
 </script>
