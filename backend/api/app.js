@@ -623,6 +623,27 @@ app.post('/login', async (req, res) => {
     }
 });
 
+/*
+ * Vraća:
+ * broj_korisnika,
+ * broj_igrica,
+ * naziv_igrice,
+ * opis,
+ * prosjecna_ocjena
+*/
+app.get('/index-summary', async (req, res) => {
+  const conn = await pool.getConnection()
+  try {
+    const rows = await conn.query('SELECT * FROM index_summary')
+    res.json(rows[0]) // view always returns exactly 1 row
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Greška na serveru' })
+  } finally {
+    conn.release()
+  }
+});
+
 app.listen(3000, () => {
     console.log('API running on http://localhost:3000');
 });
