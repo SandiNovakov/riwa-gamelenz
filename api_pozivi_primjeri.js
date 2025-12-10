@@ -1,4 +1,3 @@
-```
 import { api } from 'boot/axios' // pretpostavljamo da imate boot file za Axios
 
 // --- GET ---
@@ -45,4 +44,3 @@ async function deleteUser() {
     console.error(err)
   }
 }
-```
