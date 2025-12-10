@@ -11,6 +11,11 @@ import routes from './routes'
  * with the Router instance.
  */
 
+function checkAdmin(){
+  return true;
+}
+
+
 export default defineRouter(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
@@ -24,6 +29,19 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE)
+  })
+
+  Router.beforeEach((to, from, next) =>{
+    if (to.meta.requireAdmin){
+      const isAdmin = checkAdmin();
+      if (isAdmin){
+        next();
+      } else {
+        next('/');
+      }
+    } else {
+      next();
+    }
   })
 
   return Router
