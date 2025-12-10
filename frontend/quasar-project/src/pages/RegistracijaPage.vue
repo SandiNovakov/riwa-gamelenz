@@ -9,9 +9,17 @@
       <q-form @submit="handleRegister">
 
         <q-input
-          v-model="register.username"
+          v-model="register.korisnicko_ime"
           label="Korisničko ime"
           filled
+        />
+
+        <q-input
+          v-model="register.lozinka"
+          label="Lozinka"
+          type="password"
+          filled
+          class="q-mt-md"
         />
 
         <q-input
@@ -22,16 +30,8 @@
           class="q-mt-md"
         />
 
-        <q-input
-          v-model="register.password"
-          label="Lozinka"
-          type="password"
-          filled
-          class="q-mt-md"
-        />
-
         <q-checkbox
-          v-model="register.privateAccount"
+          v-model="register.privatni_racun"
           label="Ovo je privatni račun"
           class="q-mt-lg"
         />
@@ -54,10 +54,10 @@ import { ref } from 'vue'
 import { api } from 'src/boot/axios'
 
 const register = ref({
-  username: '',
+  korisnicko_ime: '',
+  lozinka: '',
   email: '',
-  password: '',
-  privateAccount: false  
+  privatni_racun: false  
 })
 
 async function handleRegister () {
@@ -66,7 +66,7 @@ async function handleRegister () {
 
 async function createUser() {
   try {
-    const res = await api.post('/korisnik', register.value)
+    const res = await api.post('/korisnici', register.value)
     console.log("Korisnik kreiran:", res.data)
   } catch(err) {
     console.error("API ERROR:", err)
