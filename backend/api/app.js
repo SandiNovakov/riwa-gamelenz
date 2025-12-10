@@ -600,6 +600,29 @@ app.put('/igrice/:id/prosjecna-ocjena', async (req, res) => {
     }
 });
 
+app.post('/login', async (req, res) => {
+    const { korisnicko_ime, lozinka } = req.body;  // POST body
+    const conn = await pool.getConnection();
+    try {
+        const rows = await conn.query(
+            'SELECT id_korisnika FROM korisnici WHERE korisnicko_ime = ? AND lozinka = ?',
+            [korisnicko_ime, lozinka]
+        );
+
+        if (rows.length === 0) {
+            res.status(400).json({ message: 'Pogrešni podaci.' });
+        } else {
+            const id_korisnika = rows[0].id_korisnika;
+            res.json({ id_korisnika }); // frontend može ovo spremiti kao cookie
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Greška' });
+    } finally {
+        conn.release();
+    }
+});
+
 app.listen(3000, () => {
     console.log('API running on http://localhost:3000');
 });
