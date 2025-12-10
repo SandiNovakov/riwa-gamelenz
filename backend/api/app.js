@@ -2,8 +2,15 @@ const express = require('express');
 const mariadb = require('mariadb');
 require('dotenv').config();
 
+const cors = require('cors')
+
 const app = express();
 app.use(express.json());
+
+app.use(cors({
+  origin: 'http://localhost:9000',
+  credentials: true
+}));
 
 // MariaDB connection pool
 const pool = mariadb.createPool({
