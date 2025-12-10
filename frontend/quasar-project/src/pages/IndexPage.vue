@@ -1,9 +1,7 @@
 <template>
   <q-page class="bg-dark text-white">
-    
     <!-- Hero sekcija s animacijom pri kliku -->
     <section class="hero-section flex flex-center column" @click="scrollToInfoSection">
-      
       <div class="row items-center q-gutter-xl">
         <!-- Logo -->
         <q-img
@@ -36,17 +34,17 @@
       <div class="row q-col-gutter-xl text-center">
         <div class="col-12 col-md-4">
           <div class="text-h5">Broj igara</div>
-          <div class="text-h2 text-primary">134+</div>
+          <div class="text-h2 text-primary">{{ statistics.broj_igrica }}</div>
         </div>
 
         <div class="col-12 col-md-4">
           <div class="text-h5">Broj korisnika</div>
-          <div class="text-h2 text-primary">4,982</div>
+          <div class="text-h2 text-primary">{{ statistics.broj_korisnika }}</div>
         </div>
 
         <div class="col-12 col-md-4">
           <div class="text-h5">Broj ocjena</div>
-          <div class="text-h2 text-primary">192</div>
+          <div class="text-h2 text-primary">{{ statistics.broj_ocjena }}</div>
         </div>
       </div>
 
@@ -62,8 +60,8 @@
               contain
             />
             <div>
-              <div class="text-h5">Igra123</div>
-              <div class="text-grey-5">Kratak opis igre</div>
+              <div class="text-h5">{{ statistics.naziv_igrice }}</div>
+              <div class="text-grey-5">{{ statistics.opis }}</div>
             </div>
           </div>
         </q-card>
@@ -78,7 +76,6 @@
       <div class="q-mt-xl">
         <div class="text-h4 text-bold q-mb-md">Platforme s kojima surađujemo</div>
         <div class="row justify-center q-gutter-md">
-          <!-- Logotipi platformi -->
           <div class="col-3 col-md-2">
             <q-img src="/images/platforms/playstation-logo.png" alt="PlayStation" style="width: 100px; height: auto;" />
           </div>
@@ -131,15 +128,38 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
+  data() {
+    return {
+      statistics: {
+        broj_igrica: 0,
+        broj_korisnika: 0,
+        broj_ocjena: 0,
+        naziv_igrice: '',
+        opis: ''
+      }
+    };
+  },
+  mounted() {
+    this.fetchStatistics();
+  },
   methods: {
-    // Funkcija koja scrolla prema sekciji općih podataka
+    async fetchStatistics() {
+      try {
+        const response = await axios.get('http://localhost:3000/index-summary');
+        this.statistics = response.data;
+      } catch (error) {
+        console.error('Error fetching statistics:', error);
+      }
+    },
     scrollToInfoSection() {
       const infoSection = this.$refs.infoSection;
       if (infoSection) {
         infoSection.scrollIntoView({
-          behavior: "smooth",
-          block: "start"
+          behavior: 'smooth',
+          block: 'start'
         });
       }
     }
@@ -169,6 +189,7 @@ export default {
 .text-h1 {
   cursor: pointer;
   transition: transform 0.3s ease;
+  font-size: 3rem;
 }
 
 .text-h1:hover {
