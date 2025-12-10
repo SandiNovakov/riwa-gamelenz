@@ -53,11 +53,12 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue'
+
+  const ocjena = 
 
   async function getGame() {
   try {
-    const res = await api.get('/users')  // GET /users
+    const res = await api.get('/igrice')  // GET /users
     console.log(res.data)
   } catch (err) {
     console.error(err)
