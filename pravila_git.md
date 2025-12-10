@@ -7,6 +7,7 @@
 4. za commit koristite: `git add .`, `git commit -m "poruka"`, NE radite `git ush`.
 5. kad ste gotovi pošaljite promjene na github: `git push origin feature/login-page`.
 6. javite meni.
+7. kad sam mergao vaše promjene u main, ja vama javljam i onda vi radite: `git checkout main`, `git pull origin main`, `git branch -d feature/login-page`.
 
 ## Osnovna pravila
 - **NE** radite na main branch-u. Ako vam u terminalu piše `(main)` znači da ste u main branch-u.
@@ -30,5 +31,8 @@
 - Kada ste napravili vašu stranicu možete od jednom sve vaše commit-e poslati na github koristeći `git push origin feature/login-page`.
 - Potom javite meni, pa ću dodati vaše promjene u main branch, i onda idemo dalje.
 
-## 5. Zašto komplikujem
+## 5. Sinkronizacija s main-om
+- kad sam mergao vaše promjene u main, ja vama javljam i onda vi radite: `git checkout main`, `git pull origin main`, `git branch -d feature/login-page`. Nakon ovih komandi vi ste obrisali vašu granu lokalnu, povukli sve zadnje promjene s main grane, uključujući i vaše, te ste sinkronizirani s najzadnjim promjenama.
+
+## 6. Zašto komplikujem
 - Prošli semestar smo se dugo gubili zbog pull-anja i push-anja jer se main mjenjao svakih 15 sekundi, pa bi onda pri commit-anju svojih promjena prvo morali pull-ati, a to je znalo sjebat cijeli sistem. Nadam se da će ovim načinom rada to biti izbjegnuto.
