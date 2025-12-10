@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { api } from 'boot/axios'
 
 export default {
   data() {
@@ -148,7 +148,7 @@ export default {
   methods: {
     async fetchStatistics() {
       try {
-        const response = await axios.get('http://localhost:3000/index-summary');
+        const response = await api.get('/index-summary');
         this.statistics = response.data;
       } catch (error) {
         console.error('Error fetching statistics:', error);
