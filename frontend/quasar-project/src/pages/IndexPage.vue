@@ -34,7 +34,6 @@
       </div>
 
       <div class="row q-col-gutter-xl text-center">
-
         <div class="col-12 col-md-4">
           <div class="text-h5">Broj igara</div>
           <div class="text-h2 text-primary">134+</div>
@@ -49,7 +48,6 @@
           <div class="text-h5">Broj ocjena</div>
           <div class="text-h2 text-primary">192</div>
         </div>
-
       </div>
 
       <div class="q-mt-xl">
@@ -75,6 +73,58 @@
       <div class="q-mt-xl text-grey-4 text-subtitle1">
         Na ovoj platformi korisnici mogu pregledavati razne igre, povezivati se s drugim igračima te ocjenjivati igre na temelju njihovih iskustava i preferencija.
       </div>
+
+      <!-- Sekcija za platforme s kojima surađujemo -->
+      <div class="q-mt-xl">
+        <div class="text-h4 text-bold q-mb-md">Platforme s kojima surađujemo</div>
+        <div class="row justify-center q-gutter-md">
+          <!-- Logotipi platformi -->
+          <div class="col-3 col-md-2">
+            <q-img src="/images/platforms/playstation-logo.png" alt="PlayStation" style="width: 100px; height: auto;" />
+          </div>
+          <div class="col-3 col-md-2">
+            <q-img src="/images/platforms/steam-logo.png" alt="Steam" style="width: 100px; height: auto;" />
+          </div>
+          <div class="col-3 col-md-2">
+            <q-img src="/images/platforms/xbox-logo.png" alt="Xbox" style="width: 100px; height: auto;" />
+          </div>
+          <div class="col-3 col-md-2">
+            <q-img src="/images/platforms/nintendo-logo.png" alt="Nintendo" style="width: 100px; height: auto;" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Kontakt podrška -->
+      <div class="q-mt-xl">
+        <div class="text-h4 text-bold q-mb-md">Kontakt podrška</div>
+        <p class="text-grey-4">Za bilo kakve upite ili tehničku podršku, slobodno nas kontaktirajte na:</p>
+        <p><a href="mailto:support@gamelens.com" class="text-primary">support@gamelens.com</a></p>
+      </div>
+
+      <!-- Često postavljana pitanja -->
+      <div class="q-mt-xl">
+        <div class="text-h4 text-bold q-mb-md">Često postavljana pitanja</div>
+        <div class="text-grey-4">
+          <div>
+            <strong>Kako mogu registrirati novi račun?</strong>
+            <p>Da biste registrirali novi račun, jednostavno kliknite na dugme "Registracija" na početnoj stranici, unesite svoje podatke i slijedite upute.</p>
+          </div>
+          <div>
+            <strong>Kako ocijeniti igru?</strong>
+            <p>Ocjenjivanje igre možete obaviti nakon što je igrate. Na stranici svake igre ćete vidjeti mogućnost ocjene od 1 do 5 zvjezdica.</p>
+          </div>
+          <div>
+            <strong>Kako se povezati s drugim igračima?</strong>
+            <p>Na platformi možete povezati svoj profil s drugim igračima putem naših chat soba ili foruma, gdje možete razgovarati i dogovarati zajedničke igre.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sva prava pridržana -->
+      <div class="q-mt-xl text-center text-grey-4">
+        <p>&copy; 2025 GameLenz. Sva prava pridržana.</p>
+      </div>
+
     </section>
 
   </q-page>
@@ -126,7 +176,7 @@ export default {
 }
 
 .second-section {
-  min-height: 90vh;
+  min-height: 100vh;
   padding: 30px;
 }
 
@@ -139,7 +189,7 @@ export default {
 }
 
 .text-subtitle1 {
-  font-size: 1.1rem; /* Povećali smo veličinu fonta za lakše čitanje */
+  font-size: 1.1rem;
   line-height: 1.5;
   max-width: 100%;
   word-wrap: break-word;
@@ -147,5 +197,19 @@ export default {
 
 .text-h3 {
   word-wrap: break-word;
+}
+
+.text-primary {
+  color: #1e88e5;
+  text-decoration: none;
+}
+
+.text-primary:hover {
+  text-decoration: underline;
+}
+
+.row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 </style>
