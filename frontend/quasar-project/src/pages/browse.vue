@@ -75,6 +75,20 @@
             class="col-12 col-md"
           />
 
+          <q-select
+            filled
+            v-model="filters.sort"
+            :options="sortOptions"
+            option-label="label"
+            option-value="value"
+            label="Sort by"
+            use-input
+            input-debounce="300"
+            emit-value
+            map-options
+            class="col-12 col-md"
+          />
+
           <!-- Apply Filters Button -->
           <q-btn
             label="Apply Filters"
@@ -123,13 +137,22 @@ import { api } from "boot/axios";
 import { ref, onMounted } from "vue";
 
 const filters = ref({
-  naziv_igrice: "",
+  naziv_igre: '',
   izdavac: null,
   developer: null,
   zanr: null,
   datum_od: null,
   datum_do: null,
-});
+  sort: null
+})
+
+// Sort dropdown options
+const sortOptions = ref([
+  { value: 'naziv_igrice', label: 'Naziv igre' },
+  { value: 'datum_izdavanja', label: 'Datum izdavanja' },
+  { value: 'broj_dodavanja_na_listu', label: 'Popularnost' },
+  { value: 'prosjecna_ocjena', label: 'Prosječna ocjena' }
+]);
 
 const izdavci = ref([]);
 const developeri = ref([]);
@@ -154,6 +177,7 @@ const fetchGames = async (
   zanr,
   datum_od,
   datum_do,
+  sort
 ) => {
   const params = {};
 
@@ -163,7 +187,7 @@ const fetchGames = async (
   if (zanr) params.zanr = zanr;
   if (datum_od) params.datum_od = datum_od;
   if (datum_do) params.datum_do = datum_do;
-
+  if (sort) params.sort = sort;
   const query = new URLSearchParams(params).toString();
   const res = await api.get(`/browse?${query}`);
   games.value = res.data;
@@ -178,6 +202,7 @@ const applyFilters = () => {
     filters.value.zanr,
     filters.value.datum_od,
     filters.value.datum_do,
+    filters.value.sort
   );
 };
 
@@ -200,6 +225,7 @@ onMounted(() => {
     filters.value.zanr,
     filters.value.datum_od,
     filters.value.datum_do,
+    filters.value.sort
   ); // load all games initially
 });
 </script>
