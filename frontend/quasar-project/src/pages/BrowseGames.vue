@@ -1,10 +1,8 @@
 <template>
   <q-page class="q-pa-md">
-    <!-- Top Filters -->
     <q-card flat bordered class="q-mb-md">
       <q-card-section>
         <q-form class="filters-grid">
-          <!-- Game Name (most prominent) -->
           <q-input
             filled
             v-model="filters.naziv_igrice"
@@ -12,7 +10,6 @@
             class="col-12 col-md-4 filters-wide"
           />
 
-          <!-- Publisher -->
           <q-select
             filled
             v-model="filters.izdavac"
@@ -27,7 +24,6 @@
             class="col-12 col-md"
           />
 
-          <!-- Developer -->
           <q-select
             filled
             v-model="filters.developer"
@@ -42,7 +38,6 @@
             class="col-12 col-md"
           />
 
-          <!-- Genre -->
           <q-select
             filled
             v-model="filters.zanr"
@@ -71,7 +66,6 @@
             class="col-12 col-md"
           />
 
-          <!-- Date from -->
           <q-input
             filled
             v-model="filters.datum_od"
@@ -80,7 +74,6 @@
             class="col-12 col-md"
           />
 
-          <!-- Date to -->
           <q-input
             filled
             v-model="filters.datum_do"
@@ -103,7 +96,6 @@
             class="col-12 col-md"
           />
 
-          <!-- Apply Filters Button -->
           <q-btn
             label="Apply Filters"
             color="primary"
@@ -114,8 +106,7 @@
       </q-card-section>
     </q-card>
 
-    <!-- Games List -->
-<div class="games-grid">
+    <div class="games-grid">
       <q-card
         v-for="game in games"
         :key="game.id"
@@ -142,9 +133,12 @@
         </q-card-section>
         <q-card-actions align="right">
           <q-btn
-            label="Action"
-            @click.stop="onGameButtonClick(game)"
             color="primary"
+            icon="add"
+            label="Dodaj"
+            @click.stop="onGameButtonClick(game)"
+            unelevated
+            dense
           />
         </q-card-actions>
       </q-card>
@@ -159,7 +153,6 @@ import { useRouter } from "vue-router";
 
 const router = useRouter();
 
-
 const filters = ref({
   naziv_igrice: "",
   izdavac: null,
@@ -168,10 +161,9 @@ const filters = ref({
   platforma: null,
   datum_od: null,
   datum_do: null,
-  sort: null,
+  sort: 'broj_dodavanja_na_listu',
 });
 
-// Sort dropdown options
 const sortOptions = ref([
   { value: "naziv_igrice", label: "Naziv igre" },
   { value: "datum_izdanja", label: "Datum izdavanja" },
@@ -182,9 +174,8 @@ const sortOptions = ref([
 const izdavaci = ref([]);
 const developeri = ref([]);
 const zanrovi = ref([]);
-const games = ref([]);
-
 const platforme = ref([]);
+const games = ref([]);
 
 const fetchOptions = async () => {
   const [izdRes, devRes, zanrRes, platRes] = await Promise.all([
@@ -194,10 +185,10 @@ const fetchOptions = async () => {
     api.get("/platforme"),
   ]);
 
-  izdavaci.value = izdRes.data;
-  developeri.value = devRes.data;
-  zanrovi.value = zanrRes.data;
-  platforme.value = platRes.data;
+  izdavaci.value = [{ id_izdavaca: null, naziv_izdavaca: '— Sve —' }, ...izdRes.data];
+  developeri.value = [{ id_developera: null, naziv_developera: '— Sve —' }, ...devRes.data];
+  zanrovi.value = [{ id_zanra: null, naziv_zanra: '— Sve —' }, ...zanrRes.data];
+  platforme.value = [{ id_platforme: null, naziv_platforme: '— Sve —' }, ...platRes.data];
 };
 
 const fetchGames = async (
@@ -220,12 +211,12 @@ const fetchGames = async (
   if (datum_od) params.datum_od = datum_od;
   if (datum_do) params.datum_do = datum_do;
   if (sort) params.sort = sort;
+
   const query = new URLSearchParams(params).toString();
   const res = await api.get(`/browse?${query}`);
   games.value = res.data;
 };
 
-// Called when "Apply Filters" button is pressed
 const applyFilters = () => {
   fetchGames(
     filters.value.naziv_igrice,
@@ -239,17 +230,14 @@ const applyFilters = () => {
   );
 };
 
-// Card click
 const onGameClick = (game) => {
-  // Navigate to card-specific URL
   router.push(`/igrica/${game.id_igrice}`);
 };
 
-// Button click
 const onGameButtonClick = (game) => {
-  // Navigate to button-specific URL
   router.push(`/dodavanje-igrice/${game.id_igrice}`);
 };
+
 onMounted(() => {
   fetchOptions();
   fetchGames(
@@ -266,7 +254,6 @@ onMounted(() => {
 </script>
 
 <style>
-
 .filters-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -291,7 +278,7 @@ onMounted(() => {
 
 .text-ellipsis {
   display: -webkit-box;
-  -webkit-line-clamp: 3; /* show up to 3 lines */
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
