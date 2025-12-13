@@ -1,3 +1,25 @@
+
+/* =========================
+   CLEANUP
+   ========================= */
+
+DELETE FROM igrica_na_platformi;
+DELETE FROM platforma;
+DELETE FROM igrica;
+DELETE FROM developer;
+DELETE FROM izdavac;
+DELETE FROM zanr;
+
+ALTER TABLE zanr AUTO_INCREMENT = 1;
+ALTER TABLE izdavac AUTO_INCREMENT = 1;
+ALTER TABLE developer AUTO_INCREMENT = 1;
+ALTER TABLE platforma AUTO_INCREMENT = 1;
+ALTER TABLE igrica AUTO_INCREMENT = 1;
+
+/* =========================
+   ZANROVI
+   ========================= */
+
 INSERT INTO zanr (naziv_zanra) VALUES
 ('RPG'),
 ('Action'),
@@ -7,6 +29,10 @@ INSERT INTO zanr (naziv_zanra) VALUES
 ('Horror'),
 ('FPS');
 
+/* =========================
+   IZDAVACI
+   ========================= */
+
 INSERT INTO izdavac (naziv_izdavaca) VALUES
 ('Valve'),
 ('CD Projekt'),
@@ -14,6 +40,10 @@ INSERT INTO izdavac (naziv_izdavaca) VALUES
 ('Ubisoft'),
 ('Electronic Arts'),
 ('Square Enix');
+
+/* =========================
+   DEVELOPERS
+   ========================= */
 
 INSERT INTO developer (naziv_developera) VALUES
 ('Valve'),
@@ -23,6 +53,19 @@ INSERT INTO developer (naziv_developera) VALUES
 ('DICE'),
 ('Larian Studios');
 
+/* =========================
+   PLATFORME
+   ========================= */
+
+INSERT INTO platforma (naziv_platforme) VALUES
+('PC'),
+('PlayStation'),
+('Xbox'),
+('Nintendo Switch');
+
+/* =========================
+   IGRICE
+   ========================= */
 
 INSERT INTO igrica
 (
@@ -96,3 +139,43 @@ VALUES
   6,
   1
 );
+
+/* =========================
+   IGRICA NA PLATFORMI
+   ========================= */
+
+INSERT INTO igrica_na_platformi (id_igrice, id_platforme)
+SELECT i.id_igrice, p.id_platforme
+FROM igrica i, platforma p
+WHERE i.naziv_igrice = 'The Witcher 3: Wild Hunt'
+  AND p.naziv_platforme IN ('PC', 'PlayStation', 'Xbox');
+
+INSERT INTO igrica_na_platformi (id_igrice, id_platforme)
+SELECT i.id_igrice, p.id_platforme
+FROM igrica i, platforma p
+WHERE i.naziv_igrice = 'Half-Life 2'
+  AND p.naziv_platforme = 'PC';
+
+INSERT INTO igrica_na_platformi (id_igrice, id_platforme)
+SELECT i.id_igrice, p.id_platforme
+FROM igrica i, platforma p
+WHERE i.naziv_igrice = 'Skyrim'
+  AND p.naziv_platforme IN ('PC', 'PlayStation', 'Xbox');
+
+INSERT INTO igrica_na_platformi (id_igrice, id_platforme)
+SELECT i.id_igrice, p.id_platforme
+FROM igrica i, platforma p
+WHERE i.naziv_igrice = 'Assassin''s Creed Valhalla'
+  AND p.naziv_platforme IN ('PC', 'PlayStation', 'Xbox');
+
+INSERT INTO igrica_na_platformi (id_igrice, id_platforme)
+SELECT i.id_igrice, p.id_platforme
+FROM igrica i, platforma p
+WHERE i.naziv_igrice = 'Battlefield V'
+  AND p.naziv_platforme IN ('PC', 'PlayStation', 'Xbox');
+
+INSERT INTO igrica_na_platformi (id_igrice, id_platforme)
+SELECT i.id_igrice, p.id_platforme
+FROM igrica i, platforma p
+WHERE i.naziv_igrice = 'Baldur''s Gate 3'
+  AND p.naziv_platforme IN ('PC', 'PlayStation', 'Xbox');

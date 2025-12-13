@@ -57,6 +57,22 @@
             class="col-12 col-md"
           />
 
+
+          <q-select
+            filled
+            v-model="filters.platforma"
+            :options="platforme"
+            option-label="naziv_platforme"
+            option-value="id_platforme"
+            label="Platforma"
+            use-input
+            input-debounce="300"
+            emit-value
+            map-options
+            class="col-12 col-md"
+          />
+
+
           <!-- Date from -->
           <q-input
             filled
@@ -141,15 +157,16 @@ const filters = ref({
   izdavac: null,
   developer: null,
   zanr: null,
+  platforma: null,
   datum_od: null,
   datum_do: null,
   sort: null
-})
+});
 
 // Sort dropdown options
 const sortOptions = ref([
   { value: 'naziv_igrice', label: 'Naziv igre' },
-  { value: 'datum_izdavanja', label: 'Datum izdavanja' },
+  { value: 'datum_izdanja', label: 'Datum izdavanja' },
   { value: 'broj_dodavanja_na_listu', label: 'Popularnost' },
   { value: 'prosjecna_ocjena', label: 'Prosječna ocjena' }
 ]);
@@ -159,15 +176,20 @@ const developeri = ref([]);
 const zanrovi = ref([]);
 const games = ref([]);
 
+const platforme = ref([]);
+
 const fetchOptions = async () => {
-  const [izdRes, devRes, zanrRes] = await Promise.all([
+  const [izdRes, devRes, zanrRes, platRes] = await Promise.all([
     api.get("/izdavaci"),
     api.get("/developeri"),
     api.get("/zanrovi"),
+    api.get("/platforme"),
   ]);
+
   izdavaci.value = izdRes.data;
   developeri.value = devRes.data;
   zanrovi.value = zanrRes.data;
+  platforme.value = platRes.data;
 };
 
 const fetchGames = async (
@@ -175,6 +197,7 @@ const fetchGames = async (
   izdavac,
   developer,
   zanr,
+  platforma,
   datum_od,
   datum_do,
   sort
@@ -185,6 +208,7 @@ const fetchGames = async (
   if (izdavac) params.izdavac = izdavac;
   if (developer) params.developer = developer;
   if (zanr) params.zanr = zanr;
+  if (platforma) params.platforma = platforma;
   if (datum_od) params.datum_od = datum_od;
   if (datum_do) params.datum_do = datum_do;
   if (sort) params.sort = sort;
@@ -200,6 +224,7 @@ const applyFilters = () => {
     filters.value.izdavac,
     filters.value.developer,
     filters.value.zanr,
+    filters.value.platforma,
     filters.value.datum_od,
     filters.value.datum_do,
     filters.value.sort
@@ -208,12 +233,10 @@ const applyFilters = () => {
 
 const onGameClick = (game) => {
   console.log("Card clicked:", game);
-  // navigate or do something when card is clicked
 };
 
 const onGameButtonClick = (game) => {
   console.log("Button clicked:", game);
-  // separate action for the button
 };
 
 onMounted(() => {
@@ -223,10 +246,11 @@ onMounted(() => {
     filters.value.izdavac,
     filters.value.developer,
     filters.value.zanr,
+    filters.value.platforma,
     filters.value.datum_od,
     filters.value.datum_do,
     filters.value.sort
-  ); // load all games initially
+  );
 });
 </script>
 
