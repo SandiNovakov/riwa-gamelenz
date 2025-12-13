@@ -3,7 +3,7 @@
     <!-- Top Filters -->
     <q-card flat bordered class="q-mb-md">
       <q-card-section>
-        <q-form class="row q-gutter-sm">
+        <q-form class="filters-grid">
           <!-- Game Name (most prominent) -->
           <q-input
             filled
@@ -57,7 +57,6 @@
             class="col-12 col-md"
           />
 
-
           <q-select
             filled
             v-model="filters.platforma"
@@ -71,7 +70,6 @@
             map-options
             class="col-12 col-md"
           />
-
 
           <!-- Date from -->
           <q-input
@@ -153,22 +151,22 @@ import { api } from "boot/axios";
 import { ref, onMounted } from "vue";
 
 const filters = ref({
-  naziv_igrice: '',
+  naziv_igrice: "",
   izdavac: null,
   developer: null,
   zanr: null,
   platforma: null,
   datum_od: null,
   datum_do: null,
-  sort: null
+  sort: null,
 });
 
 // Sort dropdown options
 const sortOptions = ref([
-  { value: 'naziv_igrice', label: 'Naziv igre' },
-  { value: 'datum_izdanja', label: 'Datum izdavanja' },
-  { value: 'broj_dodavanja_na_listu', label: 'Popularnost' },
-  { value: 'prosjecna_ocjena', label: 'Prosječna ocjena' }
+  { value: "naziv_igrice", label: "Naziv igre" },
+  { value: "datum_izdanja", label: "Datum izdavanja" },
+  { value: "broj_dodavanja_na_listu", label: "Popularnost" },
+  { value: "prosjecna_ocjena", label: "Prosječna ocjena" },
 ]);
 
 const izdavaci = ref([]);
@@ -200,7 +198,7 @@ const fetchGames = async (
   platforma,
   datum_od,
   datum_do,
-  sort
+  sort,
 ) => {
   const params = {};
 
@@ -227,7 +225,7 @@ const applyFilters = () => {
     filters.value.platforma,
     filters.value.datum_od,
     filters.value.datum_do,
-    filters.value.sort
+    filters.value.sort,
   );
 };
 
@@ -249,12 +247,19 @@ onMounted(() => {
     filters.value.platforma,
     filters.value.datum_od,
     filters.value.datum_do,
-    filters.value.sort
+    filters.value.sort,
   );
 });
 </script>
 
 <style>
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+
 .text-ellipsis {
   display: -webkit-box;
   -webkit-line-clamp: 3; /* show up to 3 lines */
