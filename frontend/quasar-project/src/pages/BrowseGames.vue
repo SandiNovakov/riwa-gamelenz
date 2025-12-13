@@ -9,7 +9,7 @@
             filled
             v-model="filters.naziv_igrice"
             label="Naziv igre"
-            class="col-12 col-md-4"
+            class="col-12 col-md-4 filters-wide"
           />
 
           <!-- Publisher -->
@@ -115,7 +115,7 @@
     </q-card>
 
     <!-- Games List -->
-    <div class="row q-gutter-md q-col-gutter-md">
+<div class="games-grid">
       <q-card
         v-for="game in games"
         :key="game.id"
@@ -125,15 +125,21 @@
         @click="onGameClick(game)"
       >
         <q-card-section>
-          <div class="text-h6">{{ game.naziv_igrice }}</div>
-          <div
-            class="text-body2 text-ellipsis"
-            style="max-height: 3em; overflow: hidden"
-          >
-            {{ game.opis }}
+          <div class="text-h6 q-mb-xs">
+            {{ game.naziv_igrice }}
+          </div>
+
+          <div class="text-caption text-grey-7 q-mb-sm">
+            {{ game.datum_izdanja_fmt }} • ⭐ {{ game.prosjecna_ocjena }}
+          </div>
+
+          <div class="text-body2">
+            <div><strong>Žanr:</strong> {{ game.zanr }}</div>
+            <div><strong>Developer:</strong> {{ game.developer }}</div>
+            <div><strong>Izdavač:</strong> {{ game.izdavac }}</div>
+            <div><strong>Platforme:</strong> {{ game.platforme }}</div>
           </div>
         </q-card-section>
-
         <q-card-actions align="right">
           <q-btn
             label="Action"
@@ -149,6 +155,10 @@
 <script setup>
 import { api } from "boot/axios";
 import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
 
 const filters = ref({
   naziv_igrice: "",
@@ -229,14 +239,17 @@ const applyFilters = () => {
   );
 };
 
+// Card click
 const onGameClick = (game) => {
-  console.log("Card clicked:", game);
+  // Navigate to card-specific URL
+  router.push(`/igrica/${game.id_igrice}`);
 };
 
+// Button click
 const onGameButtonClick = (game) => {
-  console.log("Button clicked:", game);
+  // Navigate to button-specific URL
+  router.push(`/dodavanje-igrice/${game.id_igrice}`);
 };
-
 onMounted(() => {
   fetchOptions();
   fetchGames(
@@ -258,6 +271,22 @@ onMounted(() => {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 12px;
+}
+
+.filters-wide {
+  grid-column: span 2;
+}
+
+.games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.games-grid q-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .text-ellipsis {

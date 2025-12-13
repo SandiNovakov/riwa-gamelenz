@@ -15,9 +15,9 @@
       </div>
 
       <div class="row q-gutter-md q-mt-xl">
-        <q-btn color="primary" label="REGISTRACIJA" to="/register" size="lg" unelevated />
+        <q-btn color="primary" label="REGISTRACIJA" to="/registracija" size="lg" unelevated />
         <q-btn color="primary" label="LOGIN" to="/login" size="lg" unelevated />
-        <q-btn color="primary" label="PREGLED IGRICA" to="/games" size="lg" unelevated />
+        <q-btn color="primary" label="PREGLED IGRICA" to="/pregled-igrica" size="lg" unelevated />
       </div>
 
       <div class="q-mt-xl text-grey-6 text-subtitle1">
