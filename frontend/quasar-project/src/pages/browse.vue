@@ -16,9 +16,9 @@
           <q-select
             filled
             v-model="filters.izdavac"
-            :options="izdavci"
-            option-label="name"
-            option-value="id"
+            :options="izdavaci"
+            option-label="naziv_izdavaca"
+            option-value="id_izdavaca"
             label="Izdavač"
             use-input
             input-debounce="300"
@@ -32,8 +32,8 @@
             filled
             v-model="filters.developer"
             :options="developeri"
-            option-label="name"
-            option-value="id"
+            option-label="naziv_developera"
+            option-value="id_developera"
             label="Developer"
             use-input
             input-debounce="300"
@@ -47,8 +47,8 @@
             filled
             v-model="filters.zanr"
             :options="zanrovi"
-            option-label="name"
-            option-value="id"
+            option-label="naziv_zanra"
+            option-value="id_zanra"
             label="Žanr"
             use-input
             input-debounce="300"
@@ -137,7 +137,7 @@ import { api } from "boot/axios";
 import { ref, onMounted } from "vue";
 
 const filters = ref({
-  naziv_igre: '',
+  naziv_igrice: '',
   izdavac: null,
   developer: null,
   zanr: null,
@@ -154,7 +154,7 @@ const sortOptions = ref([
   { value: 'prosjecna_ocjena', label: 'Prosječna ocjena' }
 ]);
 
-const izdavci = ref([]);
+const izdavaci = ref([]);
 const developeri = ref([]);
 const zanrovi = ref([]);
 const games = ref([]);
@@ -165,7 +165,7 @@ const fetchOptions = async () => {
     api.get("/developeri"),
     api.get("/zanrovi"),
   ]);
-  izdavci.value = izdRes.data;
+  izdavaci.value = izdRes.data;
   developeri.value = devRes.data;
   zanrovi.value = zanrRes.data;
 };

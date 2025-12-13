@@ -710,50 +710,92 @@ app.get("/index-summary", async (req, res) => {
  * sort (polje po kojem se sortira.)
  *
  * Vraca:
- * SELECT * FROM igrica;
+ * SELECT * FROM games_details;
  */
 
 app.get("/browse", async (req, res) => {
   const q = req.query;
 
-  const { sort } = req.query;
+  const {
+    naziv_igrice,
+    zanr,
+    developer,
+    izdavac,
+    platforma,   // single platform ID
+    datum_od,
+    datum_do,
+    sort
+  } = q;
 
-  let where = [];
-  let params = [];
+  const where = [];
+  const params = [];
 
-  // Map query param names to DB column names
-  const filters = {
-    zanr: "zanr = ?",
-    developer: "developer = ?",
-    izdavac: "izdavac = ?",
-    naziv_igrice: "naziv_igrice LIKE ?",
-    datum_od: "datum_izdavanja >= ?",
-    datum_do: "datum_izdavanja <= ?",
-  };
-
-  for (const key in filters) {
-    if (!q[key]) continue;
-
-    where.push(filters[key]);
-    params.push(q[key]);
+  // ---- basic filters (from view columns) ----
+  if (naziv_igrice) {
+    where.push("naziv_igrice LIKE ?");
+    params.push(naziv_igrice);
   }
 
-  let sql = "SELECT * FROM igrica";
+  if (zanr) {
+    where.push("id_zanra = ?");
+    params.push(zanr);
+  }
+
+  if (developer) {
+    where.push("id_developera = ?");
+    params.push(developer);
+  }
+
+  if (izdavac) {
+    where.push("id_izdavaca = ?");
+    params.push(izdavac);
+  }
+
+  if (datum_od) {
+    where.push("datum_izdanja >= ?");
+    params.push(datum_od);
+  }
+
+  if (datum_do) {
+    where.push("datum_izdanja <= ?");
+    params.push(datum_do);
+  }
+
+  if (platforma) {
+    where.push(`
+      EXISTS (
+        SELECT 1
+        FROM igrica_na_platformi ip
+        WHERE ip.id_igrice = games_details.id_igrice
+          AND ip.id_platforme = ?
+      )
+    `);
+    params.push(platforma);
+  }
+
+  // ---- base query ----
+  let sql = "SELECT * FROM games_details";
 
   if (where.length > 0) {
     sql += " WHERE " + where.join(" AND ");
   }
 
-  if (sort) {
+  // ---- safe sorting (whitelist only) ----
+  const allowedSort = [
+    "naziv_igrice",
+    "datum_izdanja",
+    "broj_dodavanja_na_listu",
+    "prosjecna_ocjena"
+  ];
+
+  if (sort && allowedSort.includes(sort)) {
     sql += ` ORDER BY ${sort} DESC`;
   }
-
-  // console.log(sql);
 
   const conn = await pool.getConnection();
   try {
     const rows = await conn.query(sql, params);
-    res.json(rows); // view always returns exactly 1 row
+    res.json(rows);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Greška na serveru" });
