@@ -8,6 +8,7 @@ const routes = [
       { path: 'igrica/:id', component: () => import('pages/GameDetail.vue')},
       { path: 'pregled-igrica', component: () => import('pages/BrowseGames.vue')},
       { path: 'registracija', component: () => import('pages/RegistracijaPage.vue')},
+      { path: 'prijava', component: () => import('pages/PrijavaPage.vue')}
   ]
   },
 
