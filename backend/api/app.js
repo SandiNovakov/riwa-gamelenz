@@ -67,6 +67,7 @@ app.get("/korisnici/:id", async (req, res) => {
   res.json(rows[0]);
 });
 
+
 // UPDATE Korisnik
 app.put("/korisnici/:id", async (req, res) => {
   const { korisnicko_ime, lozinka, email, privatni_racun } = req.body;
