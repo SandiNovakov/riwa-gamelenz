@@ -5,7 +5,7 @@
       class="hero-section flex flex-center column"
       @click="scrollToInfoSection"
     >
-      <div class="row items-center q-gutter-xl">
+      <div class="row items-center q-gutter-xl hero-row">
         <!-- Logo -->
         <q-img
           class="logo"
@@ -13,7 +13,7 @@
           style="width: 180px; height: 180px; cursor: pointer"
         />
         <div
-          class="text-h1 text-bold"
+          class="text-h1 text-bold hero-title"
           @click="scrollToInfoSection"
           style="cursor: pointer"
         >
@@ -260,4 +260,27 @@ export default {
 .text-h3 {
   word-wrap: break-word;
 }
+
+.hero-title {
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .hero-row {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-title {
+    font-size: 2.2rem;
+    white-space: normal;
+    margin-top: 12px;
+  }
+
+  .logo {
+    width: 120px !important;
+    height: 120px !important;
+  }
+}
+
 </style>
