@@ -79,9 +79,10 @@ const statusOptions = [
 ];
 
 async function saveGame2() {
+  const user_id = localStorage.getItem("id_korisnika");
   try {
     const res = await api.post("/liste", {
-      id_korisnika: 1,
+      id_korisnika: user_id,
       id_igrice: gameId,
       ocjena: ocjena.value,
       status: status.value,
