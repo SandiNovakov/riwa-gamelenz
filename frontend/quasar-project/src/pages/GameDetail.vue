@@ -59,7 +59,7 @@
     imeIgrice.value = res.data.naziv_igrice
     dodavanja.value = res.data.broj_dodavanja_na_listu
     ocjena.value = res.data.prosjecna_ocjena
-    datum.value = res.data.datum_izdanja
+    datum.value = res.data.datum_izdanja_fmt
     zanr.value = res.data.zanr
     opis.value = res.data.opis
     izdavac.value = res.data.izdavac
