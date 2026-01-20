@@ -31,7 +31,7 @@
           <div class="text-subtitle1 q-mt-xl">{{ opis }}</div>
         </div>
       </div>
-    <div class="easter-egg">Prestaniiiiiiiiiiiiii</div>
+    <h1 class="easter-egg">NO</h1>
   </q-page>
 </template>
 
@@ -76,11 +76,6 @@ onMounted(async () => {
 </script>
 
 <style>
-.all{
-  width: 1000px; 
-  border: 3px solid ; 
-  border-radius: 5px; 
-}
 
 .left{
   border-right: 1px solid grey;
@@ -88,6 +83,11 @@ onMounted(async () => {
 
 @media (min-width: 470px){
 
+  .all{
+  width: 1000px; 
+  border: 3px solid #1976d2; 
+  border-radius: 5px; 
+  }
 
   .pic{
     height: 250px; max-width: 200px
@@ -118,13 +118,13 @@ onMounted(async () => {
     font-size: small;
   }
 }
-@media (max-width: 330px){
+@media (max-width: 300px){
 
   .all{
     display: none;
   }
 }
-@media (min-width: 330px){
+@media (min-width: 300px){
 
   .easter-egg{
     display: none;
