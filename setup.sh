@@ -11,7 +11,7 @@ echo
 echo
 echo "Zapisivanje podataka u .env file..."
 # Create or overwrite .env file
-echo "DB_HOST=veleri.ucka.hr" >.env
+echo "DB_HOST=ucka.veleri.hr" >.env
 echo "DB_NAME=$DB_USER" >>.env
 echo "DB_USER=$DB_USER" >>.env
 echo "DB_PASS=$DB_PASS" >>.env
