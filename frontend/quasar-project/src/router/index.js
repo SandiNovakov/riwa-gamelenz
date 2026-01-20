@@ -18,6 +18,10 @@ import { LocalStorage } from "quasar";
  * with the Router instance.
  */
 
+function checkLogin() {
+  return LocalStorage.getItem("id_korisnika");
+}
+
 function checkAdmin() {
   const user_id = LocalStorage.getItem("id_korisnika");
 
@@ -57,13 +61,13 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   });
 
   Router.beforeEach((to, from, next) => {
-    if (to.meta.requireAdmin) {
-      const isAdmin = checkAdmin();
-      if (isAdmin) {
-        next();
-      } else {
-        next("/");
-      }
+    if (to.meta.requireLogin && !checkLogin()) {
+      next({
+        path: "/prijava",
+        query: { redirect: to.fullPath },
+      });
+    } else if (to.meta.requireAdmin && !checkAdmin()) {
+      next("/");
     } else {
       next();
     }
