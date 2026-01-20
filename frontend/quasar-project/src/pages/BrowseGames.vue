@@ -1,110 +1,117 @@
 <template>
   <q-page class="q-pa-md">
-    <q-card flat bordered class="q-mb-md">
-      <q-card-section>
-        <q-form class="filters-grid">
-          <q-input
-            filled
-            v-model="filters.naziv_igrice"
-            label="Naziv igre"
-            class="col-12 col-md-4 filters-wide"
-          />
+    <q-expansion-item
+      expand-separator
+      label="Filters"
+      default-opened
+      class="q-mb-md"
+    >
+      <q-card flat bordered class="q-mb-md">
+        <q-card-section>
+          <q-form class="filters-grid">
+            <q-input
+              filled
+              v-model="filters.naziv_igrice"
+              label="Naziv igre"
+              class="col-12 col-md-4 filters-wide"
+            />
 
-          <q-select
-            filled
-            v-model="filters.izdavac"
-            :options="izdavaci"
-            option-label="naziv_izdavaca"
-            option-value="id_izdavaca"
-            label="Izdavač"
-            use-input
-            input-debounce="300"
-            emit-value
-            map-options
-            class="col-12 col-md"
-          />
+            <q-select
+              filled
+              v-model="filters.izdavac"
+              :options="izdavaci"
+              option-label="naziv_izdavaca"
+              option-value="id_izdavaca"
+              label="Izdavač"
+              use-input
+              input-debounce="300"
+              emit-value
+              map-options
+              class="col-12 col-md"
+            />
 
-          <q-select
-            filled
-            v-model="filters.developer"
-            :options="developeri"
-            option-label="naziv_developera"
-            option-value="id_developera"
-            label="Developer"
-            use-input
-            input-debounce="300"
-            emit-value
-            map-options
-            class="col-12 col-md"
-          />
+            <q-select
+              filled
+              v-model="filters.developer"
+              :options="developeri"
+              option-label="naziv_developera"
+              option-value="id_developera"
+              label="Developer"
+              use-input
+              input-debounce="300"
+              emit-value
+              map-options
+              class="col-12 col-md"
+            />
 
-          <q-select
-            filled
-            v-model="filters.zanr"
-            :options="zanrovi"
-            option-label="naziv_zanra"
-            option-value="id_zanra"
-            label="Žanr"
-            use-input
-            input-debounce="300"
-            emit-value
-            map-options
-            class="col-12 col-md"
-          />
+            <q-select
+              filled
+              v-model="filters.zanr"
+              :options="zanrovi"
+              option-label="naziv_zanra"
+              option-value="id_zanra"
+              label="Žanr"
+              use-input
+              input-debounce="300"
+              emit-value
+              map-options
+              class="col-12 col-md"
+            />
 
-          <q-select
-            filled
-            v-model="filters.platforma"
-            :options="platforme"
-            option-label="naziv_platforme"
-            option-value="id_platforme"
-            label="Platforma"
-            use-input
-            input-debounce="300"
-            emit-value
-            map-options
-            class="col-12 col-md"
-          />
+            <q-select
+              filled
+              v-model="filters.platforma"
+              :options="platforme"
+              option-label="naziv_platforme"
+              option-value="id_platforme"
+              label="Platforma"
+              use-input
+              input-debounce="300"
+              emit-value
+              map-options
+              class="col-12 col-md"
+            />
 
-          <q-input
-            filled
-            v-model="filters.datum_od"
-            type="date"
-            label="Datum od"
-            class="col-12 col-md"
-          />
+            <q-input
+              filled
+              v-model="filters.datum_od"
+              type="date"
+              label="Datum od"
+              class="col-12 col-md"
+            />
 
-          <q-input
-            filled
-            v-model="filters.datum_do"
-            type="date"
-            label="Datum do"
-            class="col-12 col-md"
-          />
+            <q-input
+              filled
+              v-model="filters.datum_do"
+              type="date"
+              label="Datum do"
+              class="col-12 col-md"
+            />
 
-          <q-select
-            filled
-            v-model="filters.sort"
-            :options="sortOptions"
-            option-label="label"
-            option-value="value"
-            label="Sort by"
-            use-input
-            input-debounce="300"
-            emit-value
-            map-options
-            class="col-12 col-md"
-          />
+            <q-select
+              filled
+              v-model="filters.sort"
+              :options="sortOptions"
+              option-label="label"
+              option-value="value"
+              label="Sort by"
+              use-input
+              input-debounce="300"
+              emit-value
+              map-options
+              class="col-12 col-md"
+            />
 
-          <q-btn
-            label="Apply Filters"
-            color="primary"
-            class="col-12 col-md-auto"
-            @click="applyFilters"
-          />
-        </q-form>
-      </q-card-section>
-    </q-card>
+            <q-btn
+              label="Apply Filters"
+              color="primary"
+              class="col-12 col-md-auto"
+              @click="applyFilters"
+            />
+          </q-form>
+        </q-card-section>
+      </q-card>
+    </q-expansion-item>
 
     <div class="games-grid">
       <q-card
@@ -161,7 +168,7 @@ const filters = ref({
   platforma: null,
   datum_od: null,
   datum_do: null,
-  sort: 'broj_dodavanja_na_listu',
+  sort: "broj_dodavanja_na_listu",
 });
 
 const sortOptions = ref([
@@ -185,10 +192,19 @@ const fetchOptions = async () => {
     api.get("/platforme"),
   ]);
 
-  izdavaci.value = [{ id_izdavaca: null, naziv_izdavaca: '— Sve —' }, ...izdRes.data];
-  developeri.value = [{ id_developera: null, naziv_developera: '— Sve —' }, ...devRes.data];
-  zanrovi.value = [{ id_zanra: null, naziv_zanra: '— Sve —' }, ...zanrRes.data];
-  platforme.value = [{ id_platforme: null, naziv_platforme: '— Sve —' }, ...platRes.data];
+  izdavaci.value = [
+    { id_izdavaca: null, naziv_izdavaca: "— Sve —" },
+    ...izdRes.data,
+  ];
+  developeri.value = [
+    { id_developera: null, naziv_developera: "— Sve —" },
+    ...devRes.data,
+  ];
+  zanrovi.value = [{ id_zanra: null, naziv_zanra: "— Sve —" }, ...zanrRes.data];
+  platforme.value = [
+    { id_platforme: null, naziv_platforme: "— Sve —" },
+    ...platRes.data,
+  ];
 };
 
 const fetchGames = async (
@@ -262,6 +278,16 @@ onMounted(() => {
 
 .filters-wide {
   grid-column: span 2;
+}
+
+@media (max-width: 480px) {
+  .filters-grid {
+    grid-template-columns: 1fr; /* Single column */
+    /* OR use smaller minmax */
+  }
+  .filters-wide {
+    grid-column: span 1;
+  }
 }
 
 .games-grid {

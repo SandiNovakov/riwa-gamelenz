@@ -1,8 +1,16 @@
 const express = require("express");
 const mariadb = require("mariadb");
-require("dotenv").config();
-
+const path = require("path");
 const cors = require("cors");
+
+//require("dotenv").config({
+//  path: path.resolve(__dirname, "..", ".env"),
+//});
+
+require("dotenv").config({
+  path: path.resolve(__dirname, ".env"),
+  quiet: true,
+});
 
 const app = express();
 app.use(express.json());
@@ -22,15 +30,6 @@ const pool = mariadb.createPool({
   database: process.env.DB_NAME,
   connectionLimit: 5,
 });
-
-// MariaDB connection pool
-/*const pool = mariadb.createPool({
-  host: 'student.veleri.hr',
-  user: 'snovakov',
-  password: '11',
-  database: 'snovakov',
-  connectionLimit: 5,
-});*/
 
 // KORISNIK
 // CREATE Korisnik
@@ -66,7 +65,6 @@ app.get("/korisnici/:id", async (req, res) => {
   conn.release();
   res.json(rows[0]);
 });
-
 
 // UPDATE Korisnik
 app.put("/korisnici/:id", async (req, res) => {
@@ -722,10 +720,10 @@ app.get("/browse", async (req, res) => {
     zanr,
     developer,
     izdavac,
-    platforma,   // single platform ID
+    platforma, // single platform ID
     datum_od,
     datum_do,
-    sort
+    sort,
   } = q;
 
   const where = [];
@@ -786,7 +784,7 @@ app.get("/browse", async (req, res) => {
     "naziv_igrice",
     "datum_izdanja",
     "broj_dodavanja_na_listu",
-    "prosjecna_ocjena"
+    "prosjecna_ocjena",
   ];
 
   if (sort && allowedSort.includes(sort)) {
@@ -806,5 +804,5 @@ app.get("/browse", async (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("API running on http://localhost:3000");
+  console.log("API running on \x1b[36mhttp://localhost:3000/\x1b[0m");
 });
