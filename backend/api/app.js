@@ -576,28 +576,7 @@ app.get("/igrice/detalji/:id", async (req, res) => {
   try {
     const [rows] = await conn.query(
       `
-SELECT 
-    i.id_igrice,
-    i.naziv_igrice,
-    i.opis,
-    i.datum_izdanja,
-    i.prosjecna_ocjena,
-    i.broj_dodavanja_na_listu,
-    z.naziv_zanra AS zanr,
-    izd.naziv_izdavaca AS izdavac,
-    dev.naziv_developera AS developer,
-    
-    (SELECT GROUP_CONCAT(p.naziv_platforme SEPARATOR ', ')
-        FROM platforma p
-        JOIN igrica_na_platformi ip ON p.id_platforme = ip.id_platforme
-        WHERE ip.id_igrice = i.id_igrice
-    ) AS platforme
-
-FROM igrica i
-LEFT JOIN zanr z ON i.id_zanra = z.id_zanra
-LEFT JOIN izdavac izd ON i.id_izdavaca = izd.id_izdavaca
-LEFT JOIN developer dev ON i.id_developera = dev.id_developera
-WHERE i.id_igrice = ?
+SELECT * FROM games_details WHERE id_igrice = ?
     `,
       [id],
     );
