@@ -1,8 +1,16 @@
 const express = require("express");
 const mariadb = require("mariadb");
-require("dotenv").config();
-
+const path = require("path");
 const cors = require("cors");
+
+//require("dotenv").config({
+//  path: path.resolve(__dirname, "..", ".env"),
+//});
+
+require("dotenv").config({
+  path: path.resolve(__dirname, ".env"),
+  quiet: true,
+});
 
 const app = express();
 app.use(express.json());
@@ -22,15 +30,6 @@ const pool = mariadb.createPool({
   database: process.env.DB_NAME,
   connectionLimit: 5,
 });
-
-// MariaDB connection pool
-/*const pool = mariadb.createPool({
-  host: 'student.veleri.hr',
-  user: 'snovakov',
-  password: '11',
-  database: 'snovakov',
-  connectionLimit: 5,
-});*/
 
 // KORISNIK
 // CREATE Korisnik
@@ -66,7 +65,6 @@ app.get("/korisnici/:id", async (req, res) => {
   conn.release();
   res.json(rows[0]);
 });
-
 
 // UPDATE Korisnik
 app.put("/korisnici/:id", async (req, res) => {
@@ -578,28 +576,7 @@ app.get("/igrice/detalji/:id", async (req, res) => {
   try {
     const [rows] = await conn.query(
       `
-SELECT 
-    i.id_igrice,
-    i.naziv_igrice,
-    i.opis,
-    i.datum_izdanja,
-    i.prosjecna_ocjena,
-    i.broj_dodavanja_na_listu,
-    z.naziv_zanra AS zanr,
-    izd.naziv_izdavaca AS izdavac,
-    dev.naziv_developera AS developer,
-    
-    (SELECT GROUP_CONCAT(p.naziv_platforme SEPARATOR ', ')
-        FROM platforma p
-        JOIN igrica_na_platformi ip ON p.id_platforme = ip.id_platforme
-        WHERE ip.id_igrice = i.id_igrice
-    ) AS platforme
-
-FROM igrica i
-LEFT JOIN zanr z ON i.id_zanra = z.id_zanra
-LEFT JOIN izdavac izd ON i.id_izdavaca = izd.id_izdavaca
-LEFT JOIN developer dev ON i.id_developera = dev.id_developera
-WHERE i.id_igrice = ?
+SELECT * FROM games_details WHERE id_igrice = ?
     `,
       [id],
     );
@@ -660,12 +637,12 @@ app.post("/login", async (req, res) => {
   const conn = await pool.getConnection();
   try {
     const rows = await conn.query(
-      "SELECT id_korisnika FROM korisnici WHERE korisnicko_ime = ? AND lozinka = ?",
+      "SELECT id_korisnika FROM korisnik WHERE korisnicko_ime = ? AND lozinka = ?",
       [korisnicko_ime, lozinka],
     );
 
     if (rows.length === 0) {
-      res.status(400).json({ message: "Pogrešni podaci." });
+      res.status(401).json({ message: "Pogrešni podaci." });
     } else {
       const id_korisnika = rows[0].id_korisnika;
       res.json({ id_korisnika }); // frontend može ovo spremiti kao cookie
@@ -722,10 +699,10 @@ app.get("/browse", async (req, res) => {
     zanr,
     developer,
     izdavac,
-    platforma,   // single platform ID
+    platforma, // single platform ID
     datum_od,
     datum_do,
-    sort
+    sort,
   } = q;
 
   const where = [];
@@ -786,7 +763,7 @@ app.get("/browse", async (req, res) => {
     "naziv_igrice",
     "datum_izdanja",
     "broj_dodavanja_na_listu",
-    "prosjecna_ocjena"
+    "prosjecna_ocjena",
   ];
 
   if (sort && allowedSort.includes(sort)) {
@@ -806,5 +783,5 @@ app.get("/browse", async (req, res) => {
 });
 
 app.listen(3000, () => {
-  console.log("API running on http://localhost:3000");
+  console.log("API running on \x1b[36mhttp://localhost:3000/\x1b[0m");
 });

@@ -12,6 +12,7 @@
           v-model="register.korisnicko_ime"
           label="Korisničko ime"
           filled
+          :rules="[val => !!val || 'Korisničko ime je obavezno']"
         />
 
         <q-input
@@ -20,6 +21,7 @@
           type="password"
           filled
           class="q-mt-md"
+          :rules="[val => !!val || 'Lozinka je obavezna']"
         />
 
         <q-input
@@ -28,6 +30,7 @@
           type="email"
           filled
           class="q-mt-md"
+          :rules="[val => !!val || 'Email je obavezan']"
         />
 
         <q-checkbox

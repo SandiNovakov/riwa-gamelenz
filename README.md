@@ -1,44 +1,29 @@
 # GameLenz Quasar aplikacija
+
 Aplikacija napravljena u Quasar.js-u za korištenje GameLenz sustava. Sadrži API, skripte za postavljanje baze, te frontend u Quasar-u.
 
 ## Upute za developere:
+
 ### Rad s git-om
+
 Imamo osmišljen način rada s git-om kako bi izbjegli konflikte što je više moguće—pročitajte `pravila_git.md`.
+
 ### Rad na projektu
+
 Pogledajte što sve treba izraditi u `plan_izrade_projekta.md`.
+
 ### Testiranje projekta
-Ako želite imati vlastitu bazu za testiranje, pogledajte sekciju "Upute za instaliranje baze".
 
-Za pokretanje API-ja, pogledajte sekciju "Upute za pokretanje API-ja".
+Pogledajte upute "Postavljanje radnog okruženja" i "Pokretanje servera".
 
-## Upute za instaliranje baze:
-**VAŽNO**: Ovo radite samo jednom i samo ako želite imati vlastitu kopiju baze. U protivnom koristite nečiju postojeću bazu pa ovaj korak možete zanemariti.
+## Postavljanje radnog okruženja
 
-Bazu instalirate koristeći jednu od sljedećih metoda:
-### HeidiSQL
 1. Klonirajte repozitorij: `git clone https://github.com/SandiNovakov/riwa-gamelenz`.
-2. Pozicionirajte se u `riwa-gamelenz/backend/db/`.
-3. Unutra ćete vidjeti skriptu `install.sql`.
-4. Pokrenite HeidiSQL ili sličan alat i spojite se na vašu bazu.
-5. Opcionalno obrišite nepotrebne tablice u vašoj bazi (tablice koje koristi GameLenz sustav skripta će automatski obrisati i stvoriti ponovno).
-6. Idite na `File > Load SQL file...` i učitajte `install.sql`.
-7. Pokrenite SQL skriptu.
-8. Baza je uspješno instalirana.
+2. Pozicionairajte se u početni folder.
+3. Pokrenite skriptu za postavljanje: `./setup.sh`.
+4. Unesite korisničko ime i lozinku za spajanje na bazu. Korisničko ime jednako je bazi na koju se spajate.
+5. Pričekajte dok skripta instalira potrebne npm pakete.
 
-### MariaDB CLI client
-1. Instalirajte `mariadb` client package.
-1. Klonirajte repozitorij: `git clone https://github.com/SandiNovakov/riwa-gamelenz`.
-2. Pozicionirajte se u `riwa-gamelenz/backend/db/`.
-3. Ako ste na Linux-u, pokrenite komandu `chmod +x install.sh`.
-4. Zatim pokrenite `./install.sh`. (Za Windows sustave obavezno pokrenuti u git bash-u).
-5. Upišite potrebne informacije: server, ime baze, korisničko ime, lozinku.
-6. Baza je uspješno instalirana.
+## Pokretanje servera
 
-## Upute za pokretanje API-ja:
-Prije svega, potrebno je imati instaliran i postavljen [Node.js](https://nodejs.org/en) na vašem računalu.
-
-1. Navigirajte do `riwa-gamelenz/backend/api/`.
-2. Datoteku `.env.example` kopirajte i preimenujte u `.env`. **VAŽNO**: Obavezno kopirajte `.env.example` datoteku. Nemojte ju samo preimenovati niti obrisati, jer ćete ju tako obrisati iz repozitorija na GitHub-u.
-3. U novoj datoteci `.env` upišite potrebne podatke za spajanje na vašu bazu (isti kao i za instalaciju baze).
-4. Vratite se u terminal i u *istom* folderu pokrenite komandu `npm i express mariadb dotenv`.
-5. Nakon što je npm uspješno instalirao potrebne dodatke, moguće je pokrenuti server koristeći `node app.js`.
+1. Nakon pokretanja skripte `setup.sh`, potrebno je pokrenuti skriptu `./start.sh`.
