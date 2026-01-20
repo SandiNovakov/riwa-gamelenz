@@ -1,6 +1,13 @@
-import { defineRouter } from '#q-app/wrappers'
-import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
-import routes from './routes'
+import { defineRouter } from "#q-app/wrappers";
+import {
+  createRouter,
+  createMemoryHistory,
+  createWebHistory,
+  createWebHashHistory,
+} from "vue-router";
+import routes from "./routes";
+import { api } from "src/boot/axios";
+import { LocalStorage } from "quasar";
 
 /*
  * If not building with SSR mode, you can
@@ -11,15 +18,37 @@ import routes from './routes'
  * with the Router instance.
  */
 
-function checkAdmin(){
-  return true;
+function checkLogin() {
+  return LocalStorage.getItem("id_korisnika");
 }
 
+function checkAdmin() {
+  const user_id = LocalStorage.getItem("id_korisnika");
+
+  if (user_id === null) {
+    return false;
+  }
+
+  try {
+    const res = api.post("/check_rights", {
+      id_korisnika: user_id,
+    });
+    if (res.data.razina_prava === 1) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 export default defineRouter(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
-    : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory)
+    : process.env.VUE_ROUTER_MODE === "history"
+      ? createWebHistory
+      : createWebHashHistory;
 
   const Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
@@ -28,21 +57,21 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     // Leave this as is and make changes in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
-    history: createHistory(process.env.VUE_ROUTER_BASE)
-  })
+    history: createHistory(process.env.VUE_ROUTER_BASE),
+  });
 
-  Router.beforeEach((to, from, next) =>{
-    if (to.meta.requireAdmin){
-      const isAdmin = checkAdmin();
-      if (isAdmin){
-        next();
-      } else {
-        next('/');
-      }
+  Router.beforeEach((to, from, next) => {
+    if (to.meta.requireLogin && !checkLogin()) {
+      next({
+        path: "/prijava",
+        query: { redirect: to.fullPath },
+      });
+    } else if (to.meta.requireAdmin && !checkAdmin()) {
+      next("/");
     } else {
       next();
     }
-  })
+  });
 
-  return Router
-})
+  return Router;
+});
