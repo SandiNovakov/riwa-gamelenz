@@ -637,12 +637,12 @@ app.post("/login", async (req, res) => {
   const conn = await pool.getConnection();
   try {
     const rows = await conn.query(
-      "SELECT id_korisnika FROM korisnici WHERE korisnicko_ime = ? AND lozinka = ?",
+      "SELECT id_korisnika FROM korisnik WHERE korisnicko_ime = ? AND lozinka = ?",
       [korisnicko_ime, lozinka],
     );
 
     if (rows.length === 0) {
-      res.status(400).json({ message: "Pogrešni podaci." });
+      res.status(401).json({ message: "Pogrešni podaci." });
     } else {
       const id_korisnika = rows[0].id_korisnika;
       res.json({ id_korisnika }); // frontend može ovo spremiti kao cookie
