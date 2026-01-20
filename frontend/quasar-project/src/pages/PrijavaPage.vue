@@ -12,6 +12,7 @@
           v-model="login.korisnicko_ime"
           label="Korisničko ime"
           filled
+          :rules="[val => !!val || 'Korisničko ime je obavezno']"
         />
 
         <q-input
@@ -20,6 +21,7 @@
           type="password"
           filled
           class="q-mt-md"
+          :rules="[val => !!val || 'Lozinka je obavezna']"
         />
 
         <q-btn
@@ -49,12 +51,11 @@ async function handleLogin () {
 
 async function loginUser () {
   try {
-    const res = await api.post('/korisnici/:id',
-    login.value
-    )
-    console.log('Korisnik prijavljen:', res.data)
+    const res = await api.post('/login', login.value)
+    console.log('ID korisnika: ', res.data.id_korisnika)
+    localStorage.setItem('id_korisnika', res.data.id_korisnika)
   } catch (err) {
-    console.error('API ERROR:', err)
+    console.error('Greška u pisanju', err)
   }
 }
 </script>

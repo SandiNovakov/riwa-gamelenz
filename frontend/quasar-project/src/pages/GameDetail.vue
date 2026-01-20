@@ -1,22 +1,21 @@
 <template>
   <q-page padding class="flex justify-center items-start">
-      <div class="row q-py-md justify-center" style="width: 1000px; border: 3px solid #1976D2; border-radius: 5px;">
-          <div class="column q-py-md q-pl-lg col-3" style="border-right: 1px solid grey;">
+      <div class="all row q-py-md justify-center">
+          <div class="left column q-py-md q-px-lg col-3">
             <div>
-              <q-img class="rounded-borders" src="https://upload.wikimedia.org/wikipedia/en/5/5a/Clair_Obscur%2C_Expedition_33_Cover_1.webp"
-              style="height: 250px; max-width: 200px"/>
+              <q-img class="pic rounded-borders" src="https://www.svgrepo.com/show/508699/landscape-placeholder.svg"/>
             </div>
 
             <div class="q-mt-md q-gutter-md">
 
-            <div class="text-subtitle1">datum: {{ datum }}</div>
-            <div class="text-subtitle1">zanr: {{ zanr }}</div>
-            <div class="text-subtitle1">Izdavac: {{izdavac}}</div>
-            <div class="text-subtitle1">Developer: {{developer}}</div>
+            <div class="left-text text-subtitle1">datum: {{ datum }}</div>
+            <div class="left-text text-subtitle1">zanr: {{ zanr }}</div>
+            <div class="left-text text-subtitle1">Izdavac: {{izdavac}}</div>
+            <div class="left-text text-subtitle1">Developer: {{developer}}</div>
 
             </div>
           </div>
-        <div class="column q-pa-md col-9">
+        <div class="right column q-pa-md col-9">
           <div class="row justify-between q-mb-md" >
             <div class="column">
 
@@ -32,6 +31,7 @@
           <div class="text-subtitle1 q-mt-xl">{{ opis }}</div>
         </div>
       </div>
+    <div class="easter-egg">Prestaniiiiiiiiiiiiii</div>
   </q-page>
 </template>
 
@@ -74,3 +74,60 @@ onMounted(async () => {
   })
 
 </script>
+
+<style>
+.all{
+  width: 1000px; 
+  border: 3px solid ; 
+  border-radius: 5px; 
+}
+
+.left{
+  border-right: 1px solid grey;
+}
+
+@media (min-width: 470px){
+
+
+  .pic{
+    height: 250px; max-width: 200px
+  }
+}
+@media (max-width: 470px){
+
+  .left{
+  padding-left: 5px;
+  padding-right: 5px;
+  }
+
+  .right{
+    padding-left: 5px;
+  }
+
+  .pic{
+    height: 200px; max-width: 150px
+  }
+}
+@media (max-width: 400px){
+
+  .pic{
+    height: 150px; max-width: 100px
+  }
+
+  .left-text{
+    font-size: small;
+  }
+}
+@media (max-width: 330px){
+
+  .all{
+    display: none;
+  }
+}
+@media (min-width: 330px){
+
+  .easter-egg{
+    display: none;
+  }
+}
+</style>
