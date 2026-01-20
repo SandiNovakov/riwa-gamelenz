@@ -21,7 +21,7 @@
         </div>
       </div>
 
-      <div class="row q-gutter-md q-mt-xl">
+      <div class="row q-gutter-md q-mt-xl hero-buttons">
         <q-btn
           color="primary"
           label="REGISTRACIJA"
@@ -234,7 +234,7 @@ export default {
 </script>
 
 <style scoped>
-/* KEEP THESE - they are truly custom to this page */
+/* Hero sekcija */
 .hero-section {
   height: 100vh;
   padding: 20px;
@@ -244,12 +244,30 @@ export default {
   flex-direction: column;
 }
 
+.hero-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-title {
+  font-size: 3.5rem; /* veći hero naslov za desktop */
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Sekcije i podnaslovi */
 .second-section {
   min-height: 100vh;
   padding: 30px;
 }
 
-/* Utility styles */
 .text-subtitle1 {
   font-size: 1.1rem;
   line-height: 1.5;
@@ -257,14 +275,15 @@ export default {
   word-wrap: break-word;
 }
 
-.text-h3 {
+.text-h2,
+.text-h3,
+.text-h4 {
+  font-weight: bold;
+  line-height: 1.2;
   word-wrap: break-word;
 }
 
-.hero-title {
-  white-space: nowrap;
-}
-
+/* Mobilni prikaz */
 @media (max-width: 600px) {
   .hero-row {
     flex-direction: column;
@@ -281,6 +300,28 @@ export default {
     width: 120px !important;
     height: 120px !important;
   }
-}
 
+  .text-h2 {
+    font-size: 1.8rem;
+  }
+  .text-h3 {
+    font-size: 1.5rem;
+  }
+  .text-h4 {
+    font-size: 1.3rem;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .hero-buttons .q-btn {
+    min-width: 90px;
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+}
 </style>
