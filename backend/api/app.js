@@ -637,7 +637,7 @@ app.post("/login", async (req, res) => {
   const conn = await pool.getConnection();
   try {
     const rows = await conn.query(
-      "SELECT id_korisnika FROM korisnici WHERE korisnicko_ime = ? AND lozinka = ?",
+      "SELECT id_korisnika FROM korisnik WHERE korisnicko_ime = ? AND lozinka = ?",
       [korisnicko_ime, lozinka],
     );
 
@@ -777,6 +777,37 @@ app.get("/browse", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Greška na serveru" });
+  } finally {
+    conn.release();
+  }
+});
+
+app.post("/check_rights", async (req, res) => {
+  const { id_korisnika } = req.body; // POST body
+  if (!id_korisnika) {
+    return res.status(200).json({
+      razina_prava: 0,
+      message: "Nije dan ID.",
+    });
+  }
+  const conn = await pool.getConnection();
+  try {
+    const rows = await conn.query(
+      "SELECT razina_prava FROM korisnik WHERE id_korisnika = ?",
+      [id_korisnika],
+    );
+
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({
+        message: "korisnik nije pronađen.",
+        razina_prava: 0,
+      });
+    }
+    const razina_prava = rows[0].razina_prava;
+    res.json({ razina_prava }); // frontend može ovo spremiti kao cookie
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Greška", razina_prava: 0 });
   } finally {
     conn.release();
   }
