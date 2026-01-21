@@ -2,8 +2,8 @@
   <q-page class="q-pa-md">
     <q-expansion-item
       expand-separator
-      label="Filters"
-      default-opened
+      label="Filteri"
+      default-closed
       class="q-mb-md"
     >
       <q-card flat bordered class="q-mb-md">
@@ -78,7 +78,7 @@
               :options="sortOptions"
               option-label="label"
               option-value="value"
-              label="Sort by"
+              label="Sortiranje"
               use-input
               input-debounce="300"
               emit-value
@@ -87,7 +87,7 @@
             />
 
             <q-btn
-              label="Apply Filters"
+              label="Primjeni filtere"
               color="primary"
               class="col-12 col-md-auto"
               @click="applyFilters"
@@ -113,6 +113,13 @@
 
           <div class="text-caption text-grey-7 q-mb-sm">
             {{ game.datum_dodavanja_fmt }} • ⭐ {{ game.ocjena }}
+          </div>
+
+          <div
+            class="q-mt-xs"
+            :class="[getStatusColor(game.status), 'text-weight-bold']"
+          >
+            {{ game.status }}
           </div>
         </q-card-section>
         <q-card-actions align="right">
@@ -147,6 +154,19 @@
 import { api } from "boot/axios";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+
+function getStatusColor(status) {
+  if (!status) {
+    return "text-black";
+  }
+  const colors = {
+    planirano: "text-grey", // Blue for planned
+    igram: "text-green", // Green for playing
+    završeno: "text-blue", // Positive green for completed
+    odustao: "text-negative", // Negative red for dropped
+  };
+  return colors[status] || "grey";
+}
 
 const router = useRouter();
 

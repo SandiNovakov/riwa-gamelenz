@@ -2,7 +2,7 @@
   <q-page class="q-pa-md">
     <q-expansion-item
       expand-separator
-      label="Filters"
+      label="Filteri"
       default-opened
       class="q-mb-md"
     >
@@ -76,7 +76,7 @@
               filled
               v-model="filters.datum_od"
               type="date"
-              label="Datum od"
+              label="Od datuma"
               class="col-12 col-md"
             />
 
@@ -84,7 +84,7 @@
               filled
               v-model="filters.datum_do"
               type="date"
-              label="Datum do"
+              label="Do datuma"
               class="col-12 col-md"
             />
 
@@ -94,7 +94,7 @@
               :options="sortOptions"
               option-label="label"
               option-value="value"
-              label="Sort by"
+              label="Sortiranje"
               use-input
               input-debounce="300"
               emit-value
@@ -103,7 +103,7 @@
             />
 
             <q-btn
-              label="Apply Filters"
+              label="Primjeni filtere"
               color="primary"
               class="col-12 col-md-auto"
               @click="applyFilters"
