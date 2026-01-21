@@ -72,6 +72,12 @@ const linksList = [
     icon: "login",
     link: "/prijava",
   },
+  {
+    title: "Moja lista",
+    caption: "Pogledajte svoju listu igrica",
+    icon: "view_list",
+    link: "/lista",
+  },
 ];
 const leftDrawerOpen = ref(false);
 
