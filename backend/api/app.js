@@ -813,6 +813,74 @@ app.post("/check_rights", async (req, res) => {
   }
 });
 
+app.get("/lista_igrica/:id_korisnika", async (req, res) => {
+  const { id_korisnika } = req.params;
+  const q = req.query;
+
+  if (id_korisnika === null) {
+    res.json.status("404");
+  }
+
+  const { naziv_igrice, zanr, developer, izdavac, status, sort } = q;
+
+  const where = [];
+  const params = [];
+
+  where.push(`id_korisnika = ?`);
+  params.push(id_korisnika);
+
+  // ---- basic filters (from view columns) ----
+  if (naziv_igrice) {
+    where.push("naziv_igrice LIKE ?");
+    params.push(naziv_igrice);
+  }
+
+  if (zanr) {
+    where.push("id_zanra = ?");
+    params.push(zanr);
+  }
+
+  if (developer) {
+    where.push("id_developera = ?");
+    params.push(developer);
+  }
+
+  if (izdavac) {
+    where.push("id_izdavaca = ?");
+    params.push(izdavac);
+  }
+
+  if (status) {
+    where.push("status = ?");
+    params.push(status);
+  }
+
+  // ---- base query ----
+  let sql = "SELECT * FROM korisnik_lista_igrica";
+
+  if (where.length > 0) {
+    sql += " WHERE " + where.join(" AND ");
+  }
+
+  // ---- safe sorting (whitelist only) ----
+  const allowedSort = ["naziv_igrice", "datum_dodavanja", "ocjena"];
+
+  if (sort && allowedSort.includes(sort)) {
+    sql += ` ORDER BY ${sort} DESC`;
+  }
+
+  const conn = await pool.getConnection();
+  try {
+    const rows = await conn.query(sql, params);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Greška na serveru" });
+  } finally {
+    conn.release();
+  }
+});
+
 app.listen(3000, () => {
   console.log("API running on \x1b[36mhttp://localhost:3000/\x1b[0m");
 });
