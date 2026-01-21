@@ -1,18 +1,14 @@
 <template>
   <q-page class="flex flex-center">
-    <q-card class="q-pa-lg" style="width: 400px;">
-
-      <div class="text-h5 text-center q-mb-lg">
-        Registracija
-      </div>
+    <q-card class="q-pa-lg" style="width: 400px">
+      <div class="text-h5 text-center q-mb-lg">Registracija</div>
 
       <q-form @submit="handleRegister">
-
         <q-input
           v-model="register.korisnicko_ime"
           label="Korisničko ime"
           filled
-          :rules="[val => !!val || 'Korisničko ime je obavezno']"
+          :rules="[(val) => !!val || 'Korisničko ime je obavezno']"
         />
 
         <q-input
@@ -21,7 +17,7 @@
           type="password"
           filled
           class="q-mt-md"
-          :rules="[val => !!val || 'Lozinka je obavezna']"
+          :rules="[(val) => !!val || 'Lozinka je obavezna']"
         />
 
         <q-input
@@ -30,7 +26,7 @@
           type="email"
           filled
           class="q-mt-md"
-          :rules="[val => !!val || 'Email je obavezan']"
+          :rules="[(val) => !!val || 'Email je obavezan']"
         />
 
         <q-checkbox
@@ -45,34 +41,54 @@
           color="secondary"
           class="q-mt-lg full-width"
         />
-
       </q-form>
-
     </q-card>
   </q-page>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { api } from 'src/boot/axios'
+import { ref } from "vue";
+import { api } from "src/boot/axios";
+import { useRouter, useRoute } from "vue-router";
+
+const router = useRouter();
+const route = useRoute();
 
 const register = ref({
-  korisnicko_ime: '',
-  lozinka: '',
-  email: '',
-  privatni_racun: false  
-})
+  korisnicko_ime: "",
+  lozinka: "",
+  email: "",
+  privatni_racun: false,
+});
 
-async function handleRegister () {
-  await createUser()
+async function handleRegister() {
+  await createUser();
 }
 
 async function createUser() {
   try {
-    const res = await api.post('/korisnici', register.value)
-    console.log("Korisnik kreiran:", res.data)
-  } catch(err) {
-    console.error("API ERROR:", err)
+    const res = await api.post("/korisnici", register.value);
+    console.log("Korisnik kreiran:", res.data);
+
+    // Sandi, 21.1.2026: dodao sam da se pri registraciji korisnika automatski
+    // ulogira. Također bi trebao ostati redirect na stranicu koja ga je poslala
+    // na login, ako je korisnik prešao na registraciju koristeći link na PrijavaPage.
+    const login = await api.post("/login", {
+      korisnicko_ime: register.value.korisnicko_ime,
+      lozinka: register.value.lozinka,
+    });
+
+    localStorage.setItem("id_korisnika", login.data.id_korisnika);
+
+    const redirect = route.query.redirect;
+
+    if (redirect) {
+      router.push(redirect);
+    } else {
+      router.push("/");
+    }
+  } catch (err) {
+    console.error("API ERROR:", err);
   }
 }
 </script>

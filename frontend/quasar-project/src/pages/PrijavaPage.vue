@@ -26,6 +26,21 @@
           color="secondary"
           class="q-mt-lg full-width"
         />
+        <!--
+        Sandi, 21.1.2026: Dodao gumb koji vodi na registraciju i čuva
+        redirect.
+        -->
+        <div class="text-center q-mt-md">
+          <router-link
+            :to="{
+              path: 'registracija',
+              query: { redirect: $route.query.redirect },
+            }"
+            class="text-primary"
+          >
+            Nemate račun? Registrirajte se
+          </router-link>
+        </div>
       </q-form>
     </q-card>
   </q-page>
