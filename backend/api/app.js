@@ -47,14 +47,6 @@ app.post("/korisnici", async (req, res) => {
   res.send("Korisnik created");
 });
 
-// READ ALL korisnici
-app.get("/korisnici", async (req, res) => {
-  const conn = await pool.getConnection();
-  const rows = await conn.query("SELECT * FROM korisnik");
-  conn.release();
-  res.json(rows);
-});
-
 // READ ONE Korisnik
 app.get("/korisnici/:id", async (req, res) => {
   const conn = await pool.getConnection();
@@ -134,49 +126,6 @@ app.get("/igrice/:id", async (req, res) => {
   res.json(rows[0]);
 });
 
-// UPDATE Igrica
-app.put("/igrice/:id", async (req, res) => {
-  const {
-    naziv_igrice,
-    opis,
-    datum_izdanja,
-    id_izdavaca,
-    id_developera,
-    id_zanra,
-  } = req.body;
-
-  const conn = await pool.getConnection();
-  await conn.query(
-    `UPDATE igrica SET
-      naziv_igrice = ?,
-      opis = ?,
-      datum_izdanja = ?,
-      id_izdavaca = ?,
-      id_developera = ?,
-      id_zanra = ?
-     WHERE id_igrice = ?`,
-    [
-      naziv_igrice,
-      opis,
-      datum_izdanja,
-      id_izdavaca,
-      id_developera,
-      id_zanra,
-      req.params.id,
-    ],
-  );
-  conn.release();
-  res.send("Igrica updated");
-});
-
-// DELETE Igrica
-app.delete("/igrice/:id", async (req, res) => {
-  const conn = await pool.getConnection();
-  await conn.query("DELETE FROM igrica WHERE id_igrice = ?", [req.params.id]);
-  conn.release();
-  res.send("Igrica deleted");
-});
-
 // CREATE (add game to user's list)
 app.post("/liste", async (req, res) => {
   const datum_dodavanja = new Date().toISOString().split("T")[0];
@@ -217,56 +166,6 @@ app.post("/liste", async (req, res) => {
     await conn.rollback();
     console.error(err);
     res.status(500).send("Error adding game to list");
-  } finally {
-    conn.release();
-  }
-});
-
-// READ ALL (entire table)
-app.get("/liste", async (req, res) => {
-  const conn = await pool.getConnection();
-  const rows = await conn.query("SELECT * FROM igrica_na_listi");
-  conn.release();
-  res.json(rows);
-});
-
-// READ ONE (specific user's specific game)
-app.get("/liste/:userId/:gameId", async (req, res) => {
-  const { userId, gameId } = req.params;
-  const conn = await pool.getConnection();
-  const rows = await conn.query(
-    "SELECT * FROM igrica_na_listi WHERE id_korisnika = ? AND id_igrice = ?",
-    [userId, gameId],
-  );
-  conn.release();
-  res.json(rows[0]);
-});
-
-// READ ALL (all games on a user's list)
-app.get("/liste/:userId", async (req, res) => {
-  const { userId } = req.params;
-  const conn = await pool.getConnection();
-
-  try {
-    // Get all games with additional game details by joining with Igrica table
-    const rows = await conn.query(
-      `SELECT 
-        il.*, 
-        i.naziv_igrice,
-        i.opis AS opis_igrice,
-        i.datum_izdanja,
-        z.naziv_zanra
-       FROM igrica_na_listi il
-       JOIN igrica i ON il.id_igrice = i.id_igrice
-       LEFT JOIN zanr z ON i.id_zanra = z.id_zanra
-       WHERE il.id_korisnika = ?`,
-      [userId],
-    );
-
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Error fetching user game list" });
   } finally {
     conn.release();
   }
@@ -338,61 +237,12 @@ app.delete("/liste/:userId/:gameId", async (req, res) => {
   }
 });
 
-// CREATE Zanr
-app.post("/zanrovi", async (req, res) => {
-  const { naziv_zanra } = req.body;
-  const conn = await pool.getConnection();
-  await conn.query("INSERT INTO zanr (naziv_zanra) VALUES (?)", [naziv_zanra]);
-  conn.release();
-  res.send("Zanr created");
-});
-
 // READ ALL zanrovi
 app.get("/zanrovi", async (req, res) => {
   const conn = await pool.getConnection();
   const rows = await conn.query("SELECT * FROM zanr");
   conn.release();
   res.json(rows);
-});
-
-// READ ONE Zanr
-app.get("/zanrovi/:id", async (req, res) => {
-  const conn = await pool.getConnection();
-  const rows = await conn.query("SELECT * FROM zanr WHERE id_zanra = ?", [
-    req.params.id,
-  ]);
-  conn.release();
-  res.json(rows[0]);
-});
-
-// UPDATE Zanr
-app.put("/zanrovi/:id", async (req, res) => {
-  const { naziv_zanra } = req.body;
-  const conn = await pool.getConnection();
-  await conn.query("UPDATE zanr SET naziv_zanra = ? WHERE id_zanra = ?", [
-    naziv_zanra,
-    req.params.id,
-  ]);
-  conn.release();
-  res.send("Zanr updated");
-});
-
-// DELETE Zanr
-app.delete("/zanrovi/:id", async (req, res) => {
-  const conn = await pool.getConnection();
-  await conn.query("DELETE FROM zanr WHERE id_zanra = ?", [req.params.id]);
-  conn.release();
-  res.send("Zanr deleted");
-});
-
-app.post("/izdavaci", async (req, res) => {
-  const { naziv_izdavaca } = req.body;
-  const conn = await pool.getConnection();
-  await conn.query("INSERT INTO izdavac (naziv_izdavaca) VALUES (?)", [
-    naziv_izdavaca,
-  ]);
-  conn.release();
-  res.send("Izdavac created");
 });
 
 app.get("/izdavaci", async (req, res) => {
@@ -402,45 +252,6 @@ app.get("/izdavaci", async (req, res) => {
   res.json(rows);
 });
 
-app.get("/izdavaci/:id", async (req, res) => {
-  const conn = await pool.getConnection();
-  const rows = await conn.query("SELECT * FROM izdavac WHERE id_izdavaca = ?", [
-    req.params.id,
-  ]);
-  conn.release();
-  res.json(rows[0]);
-});
-
-app.put("/izdavaci/:id", async (req, res) => {
-  const { naziv_izdavaca } = req.body;
-  const conn = await pool.getConnection();
-  await conn.query(
-    "UPDATE izdavac SET naziv_izdavaca = ? WHERE id_izdavaca = ?",
-    [naziv_izdavaca, req.params.id],
-  );
-  conn.release();
-  res.send("Izdavac updated");
-});
-
-app.delete("/izdavaci/:id", async (req, res) => {
-  const conn = await pool.getConnection();
-  await conn.query("DELETE FROM izdavac WHERE id_izdavaca = ?", [
-    req.params.id,
-  ]);
-  conn.release();
-  res.send("Izdavac deleted");
-});
-
-app.post("/developeri", async (req, res) => {
-  const { naziv_developera } = req.body;
-  const conn = await pool.getConnection();
-  await conn.query("INSERT INTO developer (naziv_developera) VALUES (?)", [
-    naziv_developera,
-  ]);
-  conn.release();
-  res.send("Developer created");
-});
-
 app.get("/developeri", async (req, res) => {
   const conn = await pool.getConnection();
   const rows = await conn.query("SELECT * FROM developer");
@@ -448,125 +259,11 @@ app.get("/developeri", async (req, res) => {
   res.json(rows);
 });
 
-app.get("/developeri/:id", async (req, res) => {
-  const conn = await pool.getConnection();
-  const rows = await conn.query(
-    "SELECT * FROM developer WHERE id_developera = ?",
-    [req.params.id],
-  );
-  conn.release();
-  res.json(rows[0]);
-});
-
-app.put("/developeri/:id", async (req, res) => {
-  const { naziv_developera } = req.body;
-  const conn = await pool.getConnection();
-  await conn.query(
-    "UPDATE developer SET naziv_developera = ? WHERE id_developera = ?",
-    [naziv_developera, req.params.id],
-  );
-  conn.release();
-  res.send("Developer updated");
-});
-
-app.delete("/developeri/:id", async (req, res) => {
-  const conn = await pool.getConnection();
-  await conn.query("DELETE FROM developer WHERE id_developera = ?", [
-    req.params.id,
-  ]);
-  conn.release();
-  res.send("Developer deleted");
-});
-
-app.post("/platforme", async (req, res) => {
-  const { naziv_platforme } = req.body;
-  const conn = await pool.getConnection();
-  await conn.query("INSERT INTO platforma (naziv_platforme) VALUES (?)", [
-    naziv_platforme,
-  ]);
-  conn.release();
-  res.send("Platforma created");
-});
-
 app.get("/platforme", async (req, res) => {
   const conn = await pool.getConnection();
   const rows = await conn.query("SELECT * FROM platforma");
   conn.release();
   res.json(rows);
-});
-
-app.get("/platforme/:id", async (req, res) => {
-  const conn = await pool.getConnection();
-  const rows = await conn.query(
-    "SELECT * FROM platforma WHERE id_platforme = ?",
-    [req.params.id],
-  );
-  conn.release();
-  res.json(rows[0]);
-});
-
-app.put("/platforme/:id", async (req, res) => {
-  const { naziv_platforme } = req.body;
-  const conn = await pool.getConnection();
-  await conn.query(
-    "UPDATE platforma SET naziv_platforme = ? WHERE id_platforme = ?",
-    [naziv_platforme, req.params.id],
-  );
-  conn.release();
-  res.send("Platforma updated");
-});
-
-app.delete("/platforme/:id", async (req, res) => {
-  const conn = await pool.getConnection();
-  await conn.query("DELETE FROM platforma WHERE id_platforme = ?", [
-    req.params.id,
-  ]);
-  conn.release();
-  res.send("Platforma deleted");
-});
-
-// CREATE – povezi igricu s platformom
-app.post("/igrice-platforme", async (req, res) => {
-  const { id_igrice, id_platforme } = req.body;
-  const conn = await pool.getConnection();
-  await conn.query(
-    "INSERT INTO igrica_na_platformi (id_igrice, id_platforme) VALUES (?, ?)",
-    [id_igrice, id_platforme],
-  );
-  conn.release();
-  res.send("Veza Igrica-Platforma dodana");
-});
-
-// READ ALL – sve veze Igrica-Platforma
-app.get("/igrice-platforme", async (req, res) => {
-  const conn = await pool.getConnection();
-  const rows = await conn.query("SELECT * FROM igrica_na_platformi");
-  conn.release();
-  res.json(rows);
-});
-
-// READ ONE – veza između tocno jedne igrice i platforme
-app.get("/igrice-platforme/:igricaId/:platformaId", async (req, res) => {
-  const { igricaId, platformaId } = req.params;
-  const conn = await pool.getConnection();
-  const rows = await conn.query(
-    "SELECT * FROM igrica_na_platformi WHERE id_igrice = ? AND id_platforme = ?",
-    [igricaId, platformaId],
-  );
-  conn.release();
-  res.json(rows[0]);
-});
-
-// DELETE – ukloni vezu
-app.delete("/igrice-platforme/:igricaId/:platformaId", async (req, res) => {
-  const { igricaId, platformaId } = req.params;
-  const conn = await pool.getConnection();
-  await conn.query(
-    "DELETE FROM igrica_na_platformi WHERE id_igrice = ? AND id_platforme = ?",
-    [igricaId, platformaId],
-  );
-  conn.release();
-  res.send("Veza igrica-platforma obrisana");
 });
 
 app.get("/igrice/detalji/:id", async (req, res) => {
@@ -588,45 +285,6 @@ SELECT * FROM games_details WHERE id_igrice = ?
   } catch (err) {
     console.error("Database error:", err);
     res.status(500).json({ message: "Greška pri dohvaćanju igrice." });
-  } finally {
-    conn.release();
-  }
-});
-
-//UPDATE prosjecna ocjena, trebalo bi se raditi za svaku igricu povremeno.
-// UPDATE prosjecna ocjena
-app.put("/igrice/:id/prosjecna-ocjena", async (req, res) => {
-  const { id } = req.params;
-  const conn = await pool.getConnection();
-
-  try {
-    // 1. Get average rating
-    const [rows] = await conn.query(
-      `
-            SELECT AVG(inl.ocjena) AS prosjek
-            FROM igrica_na_listi inl
-            JOIN korisnik k ON inl.id_korisnika = k.id_korisnika
-            WHERE inl.id_igrice = ? AND k.privatni_racun = FALSE AND inl.ocjena IS NOT NULL
-        `,
-      [id],
-    );
-
-    // 2. Update average rating in Igrica table
-    await conn.query(
-      `
-            UPDATE igrica 
-            SET prosjecna_ocjena = ? 
-            WHERE id_igrice = ?
-        `,
-      [rows.prosjek, id],
-    );
-    res.json({
-      message: "Prosjecna ocjena azurirana.",
-      nova_ocjena: rows.prosjek,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Greška pri obracunu prosjecne ocjene." });
   } finally {
     conn.release();
   }
@@ -690,7 +348,6 @@ app.get("/index-summary", async (req, res) => {
  * Vraca:
  * SELECT * FROM games_details;
  */
-
 app.get("/browse", async (req, res) => {
   const q = req.query;
 
@@ -782,8 +439,9 @@ app.get("/browse", async (req, res) => {
   }
 });
 
+//prima id_korisnika, vraca razinu prava korisnika;
 app.post("/check_rights", async (req, res) => {
-  const { id_korisnika } = req.body; // POST body
+  const { id_korisnika } = req.body;
   if (!id_korisnika) {
     return res.status(200).json({
       razina_prava: 0,
@@ -804,7 +462,7 @@ app.post("/check_rights", async (req, res) => {
       });
     }
     const razina_prava = rows[0].razina_prava;
-    res.json({ razina_prava }); // frontend može ovo spremiti kao cookie
+    res.json({ razina_prava });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Greška", razina_prava: 0 });
