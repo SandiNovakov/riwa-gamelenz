@@ -28,7 +28,7 @@
       <q-input filled v-model="komentar" type="textarea" label="Komentar" />
 
       <q-btn
-        label="Spremi2"
+        label="Spremi"
         color="primary"
         @click="saveGame2"
         class="full-width"
@@ -39,7 +39,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { api } from "boot/axios";
 const ocjena = ref("");
 const status = ref("planirano");
@@ -47,6 +47,7 @@ const komentar = ref("");
 const gameName = ref("Učitavanje...");
 
 const route = useRoute();
+const router = useRouter();
 const gameId = route.params.id;
 
 const getGameName = async () => {
@@ -76,6 +77,7 @@ const statusOptions = [
   { label: "Planirano", value: "planirano" },
   { label: "Igram", value: "igram" },
   { label: "Završeno", value: "završeno" },
+  { label: "Odustao", value: "odustao" },
 ];
 
 async function saveGame2() {
@@ -90,6 +92,7 @@ async function saveGame2() {
     });
     console.log(res.data);
     alert("Podaci su uspješno spremljeni!");
+    router.push("/pregled-igrica");
   } catch (err) {
     console.error(err);
     alert("Došlo je do greške pri spremanju!");
