@@ -54,20 +54,20 @@
     <section ref="infoSection" class="second-section q-pa-xl">
       <div class="text-h3 text-bold q-mb-xl">Općeniti podaci</div>
 
-      <div class="row q-col-gutter-xl text-center">
-        <div class="col-12 col-md-4">
+      <div class="row q-col-gutter-xl text-center justify-evenly">
+        <div>
           <div class="text-h5">Broj igara</div>
           <div class="text-h2 text-primary">{{ statistics.broj_igrica }}</div>
         </div>
 
-        <div class="col-12 col-md-4">
+        <div >
           <div class="text-h5">Broj korisnika</div>
           <div class="text-h2 text-primary">
             {{ statistics.broj_korisnika }}
           </div>
         </div>
 
-        <div class="col-12 col-md-4">
+        <div>
           <div class="text-h5">Broj ocjena</div>
           <div class="text-h2 text-primary">{{ statistics.broj_ocjena }}</div>
         </div>
