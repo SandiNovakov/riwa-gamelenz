@@ -28,7 +28,7 @@ const pool = mariadb.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  connectionLimit: 5,
+  connectionLimit: 20,
 });
 
 // KORISNIK
@@ -116,7 +116,7 @@ app.delete("/korisnici/:id", async (req, res) => {
 //ADMINISTRATORI GET PUT DELETE
 app.get("/administratori", async (req, res) => {
   const conn = await pool.getConnection();
-  await conn.query(
+  const rows = await conn.query(
     "SELECT korisnicko_ime, email, id_korisnika FROM korisnik WHERE razina_prava = 1",
   );
   conn.release();
@@ -125,13 +125,15 @@ app.get("/administratori", async (req, res) => {
 
 app.get("/administratori/check/:id", async (req, res) => {
   const conn = await pool.getConnection();
-  const rows = await conn.query(
-    "SELECT 1 FROM korisnik WHERE id_korisnika = ? and razina_prava = 1",
-    [req.params.id],
-  );
-
-  conn.release();
-
+  let rows;
+  try {
+    rows = await conn.query(
+      "SELECT id_korisnika FROM korisnik WHERE id_korisnika = ? and razina_prava = 1",
+      [req.params.id],
+    );
+  } finally {
+    conn.release();
+  }
   if (rows.length === 0) {
     res.json({
       isAdmin: false,
@@ -146,7 +148,7 @@ app.get("/administratori/check/:id", async (req, res) => {
 app.post("/administratori", async (req, res) => {
   const conn = await pool.getConnection();
   await conn.query(
-    "UPDATE korisnici SET razina_prava = 1 WHERE id_korisnika = ?",
+    "UPDATE korisnik SET razina_prava = 1 WHERE id_korisnika = ?",
     [req.params.id],
   );
   conn.release();
@@ -156,7 +158,7 @@ app.post("/administratori", async (req, res) => {
 app.delete("/administratori/:id", async (req, res) => {
   const conn = await pool.getConnection();
   await conn.query(
-    "UPDATE korisnici SET razina_prava = 1 WHERE id_korisnika = ?",
+    "UPDATE korisnik SET razina_prava = 0 WHERE id_korisnika = ?",
     [req.params.id],
   );
   conn.release();
