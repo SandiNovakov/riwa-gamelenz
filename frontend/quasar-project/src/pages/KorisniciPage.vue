@@ -2,12 +2,12 @@
   <q-page padding class="q-pa-lg">
     <div class="text-h5 q-mb-md">Pretraga korisnika</div>
 
-    <div class="row q-col-gutter-md items-center">
-      <div class="col">
-        <q-input filled v-model="korisnicko_ime" label="Upiši korisničko ime" />
-      </div>
+    <div class="row">
 
-      <q-btn label="Traži" color="primary" @click="fetchUsers" />
+      <q-input class="col-11" filled v-model="korisnicko_ime" label="Upiši korisničko ime" />
+
+      <q-btn class="col-1 self-strech" label="Traži" color="primary" @click="fetchUsers" />
+
     </div>
 
     <div class="q-mt-lg q-gutter-md">
