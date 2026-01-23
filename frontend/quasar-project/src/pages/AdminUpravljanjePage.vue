@@ -1,29 +1,23 @@
 <template>
   <q-page class="q-pa-md">
-    <div class="text-h5 q-mb-md">
-      Upravljanje korisnicima
-    </div>
+    <div class="text-h5 q-mb-md">Upravljanje administratorima</div>
 
     <div class="users-grid">
-      <q-card
-        v-for="user in users"
-        :key="user.id_korisnika"
-        flat
-        bordered
-      >
+      <q-card v-for="user in users" :key="user.id_korisnika" flat bordered>
         <q-card-section>
           <div class="text-h6">{{ user.korisnicko_ime }}</div>
-          <div class="text-caption text-grey-7">ID: {{ user.id_korisnika }}</div>
+          <div class="text-caption text-grey-7">
+            ID: {{ user.id_korisnika }}
+          </div>
           <div class="text-caption text-grey-7">{{ user.email }}</div>
           <div class="text-caption text-grey-7">
-            Prava: {{ user.razina_prava === 1 ? 'Admin' : 'Korisnik' }}
+            Prava: {{ user.razina_prava === 1 ? "Admin" : "Korisnik" }}
           </div>
         </q-card-section>
 
         <q-card-actions align="right">
           <!-- Dugme za skidanje admin prava -->
           <q-btn
-            v-if="user.razina_prava === 1"
             icon="person_off"
             color="negative"
             flat
@@ -46,10 +40,10 @@ const users = ref([]);
 
 const fetchUsers = async () => {
   try {
-    const res = await api.get("/korisnici");
+    const res = await api.get("/administratori");
     users.value = res.data;
   } catch (err) {
-    console.error("Greška pri dohvaćanju korisnika:", err);
+    console.error("Greška pri dohvaćanju administratora:", err);
   }
 };
 

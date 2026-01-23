@@ -116,7 +116,7 @@ app.delete("/korisnici/:id", async (req, res) => {
 //ADMINISTRATORI GET PUT DELETE
 app.get("/administratori", async (req, res) => {
   const conn = await pool.getConnection();
-  await conn.query(
+  const rows = await conn.query(
     "SELECT korisnicko_ime, email, id_korisnika FROM korisnik WHERE razina_prava = 1",
   );
   conn.release();
@@ -125,8 +125,9 @@ app.get("/administratori", async (req, res) => {
 
 app.get("/administratori/check/:id", async (req, res) => {
   const conn = await pool.getConnection();
+  let rows;
   try {
-    const rows = await conn.query(
+    rows = await conn.query(
       "SELECT id_korisnika FROM korisnik WHERE id_korisnika = ? and razina_prava = 1",
       [req.params.id],
     );
