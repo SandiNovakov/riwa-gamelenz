@@ -18,26 +18,67 @@
         class="cursor-pointer"
       >
         <q-card-section>
-          <div class="text-h6">{{ user.korisnicko_ime }}</div>
+          <div class="text-h6">
+            {{ user.korisnicko_ime }}
+            <q-icon
+              v-if="user.razina_prava === 1 && isAdminUser"
+              name="admin_panel_settings"
+              color="primary"
+              size="sm"
+            >
+              <q-tooltip>Administrator</q-tooltip>
+            </q-icon>
+          </div>
+          <div></div>
         </q-card-section>
+        <q-card-actions align="right">
+          <q-btn
+            icon="admin_panel_settings"
+            v-if="isAdminUser && user.razina_prava !== 1"
+            dense
+            color="primary"
+            label="Dodaj kao administratora"
+            @click.stop="onEditButtonClick(user)"
+          >
+            <q-tooltip>Izmjeni igricu</q-tooltip>
+          </q-btn>
+        </q-card-actions>
       </q-card>
     </div>
   </q-page>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { api } from "boot/axios";
 import { useRouter } from "vue-router";
 
 const korisnicko_ime = ref("");
 const router = useRouter();
 
+const isAdminUser = ref(false);
+
 function onCardClicked(user_id) {
   router.push(`/lista/${user_id}`);
 }
 
 const users = ref([]);
+
+const checkAdmin = async () => {
+  const userId = localStorage.getItem("id_korisnika");
+  if (!userId) {
+    isAdminUser.value = false;
+    return;
+  }
+
+  try {
+    const response = await api.get(`/administratori/check/${userId}`);
+    isAdminUser.value = response.data.isAdmin === true;
+  } catch (error) {
+    console.error("Admin check failed:", error);
+    isAdminUser.value = false;
+  }
+};
 
 const fetchUsers = async () => {
   try {
@@ -50,4 +91,14 @@ const fetchUsers = async () => {
     users.value = [];
   }
 };
+
+async function onEditButtonClick(user) {
+  await api.post(`/administratori/${user.id_korisnika}`);
+
+  alert(`Korisnik: ${user.korisnicko_ime}`);
+}
+
+onMounted(() => {
+  checkAdmin();
+});
 </script>

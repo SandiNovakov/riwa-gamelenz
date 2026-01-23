@@ -159,14 +159,14 @@ app.get("/administratori/check/:id", async (req, res) => {
   }
 });
 
-app.post("/administratori", async (req, res) => {
+app.post("/administratori/:id", async (req, res) => {
   const conn = await pool.getConnection();
   await conn.query(
     "UPDATE korisnik SET razina_prava = 1 WHERE id_korisnika = ?",
     [req.params.id],
   );
   conn.release();
-  res.json(rows);
+  res.json("admin dodan");
 });
 
 app.delete("/administratori/:id", async (req, res) => {

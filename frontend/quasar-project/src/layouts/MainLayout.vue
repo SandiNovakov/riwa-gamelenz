@@ -127,12 +127,6 @@ const adminLinks = [
     link: "/admin/dodavanje-igrice",
   },
   {
-    title: "Admin - Upravljanje igricom",
-    caption: "Administratorsko upravljanje igricama",
-    icon: "sports_esports",
-    link: "/admin/igrica",
-  },
-  {
     title: "Admin - Developeri",
     caption: "Upravljanje developerima",
     icon: "developer_mode",
