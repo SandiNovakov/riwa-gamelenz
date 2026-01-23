@@ -68,6 +68,11 @@ const routes = [
         component: () => import("pages/AdminZanroviPage.vue"),
         meta: { requireAdmin: true },
       },
+      {
+        path: "admin/upravljanje",
+        component: () => import("pages/AdminUpravljanjePage.vue"),
+        //meta: { requireAdmin: true },
+      },
     ],
   },
 
