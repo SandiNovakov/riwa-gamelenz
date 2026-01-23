@@ -51,7 +51,7 @@ const routes = [
       {
         path: "admin/developeri",
         component: () => import("pages/AdminDeveloperiPage.vue"),
-        meta: { requireAdmin: true },
+        //meta: { requireAdmin: true },
       },
       {
         path: "admin/izdavaci",
