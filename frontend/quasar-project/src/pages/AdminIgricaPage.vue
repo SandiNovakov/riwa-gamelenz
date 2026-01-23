@@ -59,7 +59,15 @@
             class="self-center"
             label="Spremi"
             color="primary"
-            @click="createGame"
+            @click="updateGame"
+          />
+
+          <q-btn
+          class="self-center"
+          type="button"
+          label="Obriši Igricu"
+          color="negative"
+          @click="confirmDelete"
           />
       </div>
 
@@ -72,10 +80,12 @@
   import { api } from 'boot/axios'
   import {useRoute, useRouter} from 'vue-router'
   import {ref, onMounted} from 'vue'
+  import { useQuasar } from "quasar";
 
   const router = useRouter();
   const route = useRoute();
   const gameId = route.params.id;
+  const $q = useQuasar();
   const gameName = ref("Učitavanje...");
 
   const imeIgrice = ref("");
@@ -101,17 +111,34 @@
 
   }
 
-  const getGameName = async () => {
+  const getGame = async () => {
   try {
     const res = await api.get(`/igrice/${gameId}`);
     gameName.value = res.data.naziv_igrice;
+    imeIgrice.value = res.data.naziv_igrice;
+    opis.value = res.data.opis;
+    if (res.data.datum_izdanja) {
+      const dateObj = new Date(res.data.datum_izdanja);
+      if (!isNaN(dateObj.getTime())) {
+        date.value = dateObj.toISOString().split('T')[0];
+      } else {
+        // If the date is in dd/mm/yyyy format
+        const parts = res.data.datum_izdanja.split('/');
+        if (parts.length === 3) {
+          date.value = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+      }
+    }
+    developer.value = res.data.id_developera;
+    izdavac.value = res.data.id_izdavaca;
+    zanr.value = res.data.id_zanra;
     console.log(res.data);
   } catch (err) {
     console.error(err);
   }
   };
 
-  async function createGame ()  {
+  async function updateGame ()  {
     try {
     const res = await api.put(`/igrice/${gameId}`, {
       naziv_igrice: imeIgrice.value,
@@ -128,13 +155,38 @@
       console.error(err);
       alert("Došlo je do greške pri spremanju!");
     }
-
-    //router.push(`/pregled-igrica`);
   };
+
+function confirmDelete() {
+  $q.dialog({
+    title: "Upozorenje!",
+    message: "Jeste li sigurni da želite obrisati igricu?",
+    ok: {
+      label: "Da, obriši",
+      color: "negative",
+    },
+    cancel: {
+      label: "Ne",
+      flat: true,
+    },
+    persistent: true,
+  }).onOk(deleteGame);
+}
+
+async function deleteGame() {
+  if (!gameId) return;
+
+  try {
+    await api.delete(`/igrice/${gameId}`);
+    router.push("/pregled-igrica");
+  } catch (err) {
+    console.error("Greška pri brisanju igrice:", err);
+  }
+}
 
   onMounted(() => {
     fetchOptions();
-    getGameName();
+    getGame();
   });
 </script>
 
