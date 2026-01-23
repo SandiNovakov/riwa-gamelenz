@@ -9,6 +9,11 @@ const routes = [
         component: () => import("pages/AddGame.vue"),
         meta: { requireLogin: true },
       },
+      {
+        path: "uredivanje-igrice/:id",
+        component: () => import("pages/editGame.vue"),
+        meta: { requireLogin: true },
+      },
       { path: "igrica/:id", component: () => import("pages/GameDetail.vue") },
       {
         path: "pregled-igrica",
