@@ -24,6 +24,45 @@ const routes = [
         component: () => import("pages/AccountPage.vue"),
         meta: { requireLogin: true },
       },
+      {
+        path: "pretraga-korisnika",
+        component: () => import("pages/KorisniciPage.vue"),
+      },
+      {
+        path: "upravljanje-racunom",
+        component: () => import("pages/PostavkePage.vue"),
+        meta: { requireLogin: true },
+      },
+      {
+        path: "admin/dodavanje-igrice",
+        component: () => import("pages/AdminDodavanjeIgricePage.vue"),
+        meta: { requireAdmin: true },
+      },
+      {
+        path: "admin/igrica",
+        component: () => import("pages/AdminIgricaPage.vue"),
+        meta: { requireAdmin: true },
+      },
+      {
+        path: "admin/developeri",
+        component: () => import("pages/AdminDeveloperiPage.vue"),
+        meta: { requireAdmin: true },
+      },
+      {
+        path: "admin/izdavaci",
+        component: () => import("pages/AdminIzdavaciPage.vue"),
+        meta: { requireAdmin: true },
+      },
+      {
+        path: "admin/platforme",
+        component: () => import("pages/AdminPlatformePage.vue"),
+        meta: { requireAdmin: true },
+      },
+      {
+        path: "admin/zanrovi",
+        component: () => import("pages/AdminZanroviPage.vue"),
+        meta: { requireAdmin: true },
+      },
     ],
   },
 
