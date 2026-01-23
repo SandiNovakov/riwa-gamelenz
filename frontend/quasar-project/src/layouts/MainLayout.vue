@@ -69,7 +69,7 @@ const linksList = [
   {
     title: "Prijava",
     caption: "Prijava u korisnički račun",
-    icon: "login",
+    icon: "settings",
     link: "/prijava",
   },
   {
@@ -77,6 +77,12 @@ const linksList = [
     caption: "Pogledajte svoju listu igrica",
     icon: "view_list",
     link: "/lista",
+  },
+  {
+    title: "Upravljanje računa",
+    caption: "Upravljanje postavkama računa",
+    icon: "manage_accounts",
+    link: "/upravljanje-racunom",
   },
 ];
 const leftDrawerOpen = ref(false);
