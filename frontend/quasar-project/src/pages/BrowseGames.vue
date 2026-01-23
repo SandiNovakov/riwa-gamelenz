@@ -140,6 +140,17 @@
         </q-card-section>
         <q-card-actions align="right">
           <q-btn
+            icon="settings"
+            v-if="isAdminUser"
+            dense
+            flat
+            round
+            @click.stop="onEditButtonClick(game)"
+          >
+            <q-tooltip>Izmjeni igricu</q-tooltip>
+          </q-btn>
+
+          <q-btn
             color="primary"
             icon="add"
             label="Dodaj"
@@ -159,6 +170,7 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
+const isAdminUser = ref(false);
 
 const filters = ref({
   naziv_igrice: "",
@@ -254,7 +266,12 @@ const onGameButtonClick = (game) => {
   router.push(`/dodavanje-igrice/${game.id_igrice}`);
 };
 
+const onEditButtonClick = (game) => {
+  router.push(`/admin/igrica/${game.id_igrice}`);
+};
+
 onMounted(() => {
+  checkAdmin();
   fetchOptions();
   fetchGames(
     filters.value.naziv_igrice,
@@ -267,6 +284,22 @@ onMounted(() => {
     filters.value.sort,
   );
 });
+
+const checkAdmin = async () => {
+  const userId = localStorage.getItem("id_korisnika");
+  if (!userId) {
+    isAdminUser.value = false;
+    return;
+  }
+
+  try {
+    const response = await api.get(`/administratori/check/${userId}`);
+    isAdminUser.value = response.data.isAdmin === true;
+  } catch (error) {
+    console.error("Admin check failed:", error);
+    isAdminUser.value = false;
+  }
+};
 </script>
 
 <style>
