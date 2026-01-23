@@ -25,7 +25,7 @@ const routes = [
       },
       { path: "prijava", component: () => import("pages/PrijavaPage.vue") },
       {
-        path: "lista",
+        path: "lista/:id",
         component: () => import("pages/AccountPage.vue"),
         meta: { requireLogin: true },
       },

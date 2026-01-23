@@ -1,5 +1,23 @@
 <template>
   <q-page class="q-pa-md">
+    <!-- User info section -->
+    <q-card flat class="q-mb-md">
+      <q-card-section class="row items-center justify-between">
+        <div class="col">
+          <div class="text-h3">{{ korisnik.korisnicko_ime }}</div>
+        </div>
+        <div class="col-auto">
+          <q-btn
+            v-if="currentUserId === korisnik.id_korisnika"
+            icon="settings"
+            color="primary"
+            label="Postavke računa"
+            @click="onPostavkeButtonClick"
+          />
+        </div>
+      </q-card-section>
+    </q-card>
+
     <q-expansion-item
       expand-separator
       label="Filteri"
@@ -122,7 +140,10 @@
             {{ game.status }}
           </div>
         </q-card-section>
-        <q-card-actions align="right">
+        <q-card-actions
+          align="right"
+          v-if="currentUserId === korisnik.id_korisnika"
+        >
           <q-btn
             icon="mode_edit"
             color="primary"
@@ -152,8 +173,12 @@
 
 <script setup>
 import { api } from "boot/axios";
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+
+const currentUserId = computed(() => {
+  return Number(localStorage.getItem("id_korisnika"));
+});
 
 function getStatusColor(status) {
   if (!status) {
@@ -168,6 +193,9 @@ function getStatusColor(status) {
   return colors[status] || "grey";
 }
 
+const korisnik = ref([]);
+
+const route = useRoute();
 const router = useRouter();
 
 const filters = ref({
@@ -224,12 +252,6 @@ const fetchGames = async (
   sort,
 ) => {
   const params = {};
-  const id_korisnika = localStorage.getItem("id_korisnika");
-
-  if (!id_korisnika) {
-    console.log("greška pri dohvaćanju igrica.");
-    return;
-  }
 
   if (naziv_igrice) params.naziv_igrice = `%${naziv_igrice}%`;
   if (izdavac) params.izdavac = izdavac;
@@ -239,7 +261,9 @@ const fetchGames = async (
   if (sort) params.sort = sort;
 
   const query = new URLSearchParams(params).toString();
-  const res = await api.get(`/lista_igrica/${id_korisnika}?${query}`);
+  const res = await api.get(
+    `/lista_igrica/${korisnik.value.id_korisnika}?${query}`,
+  );
   games.value = res.data;
 };
 
@@ -263,14 +287,7 @@ const onEditButtonClick = (game) => {
 };
 
 async function onDeleteButtonClick(game) {
-  const id_korisnika = localStorage.getItem("id_korisnika");
-
-  if (!id_korisnika) {
-    console.log("greška pri brisanju igrice.");
-    return;
-  }
-
-  await api.delete(`/liste/${id_korisnika}/${game.id_igrice}`);
+  await api.delete(`/liste/${korisnik.value.id_korisnika}/${game.id_igrice}`);
   fetchGames(
     filters.value.naziv_igrice,
     filters.value.izdavac,
@@ -281,7 +298,17 @@ async function onDeleteButtonClick(game) {
   );
 }
 
-onMounted(() => {
+async function getKorisnik() {
+  const res = await api.get(`/korisnici/${route.params.id}`);
+  korisnik.value = res.data;
+}
+
+function onPostavkeButtonClick() {
+  router.push("/upravljanje-racunom");
+}
+
+onMounted(async () => {
+  await getKorisnik();
   fetchOptions();
   fetchGames(
     filters.value.naziv_igrice,

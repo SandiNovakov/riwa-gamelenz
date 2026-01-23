@@ -88,18 +88,32 @@ app.get("/korisnici/:id", async (req, res) => {
 // UPDATE Korisnik
 app.put("/korisnici/:id", async (req, res) => {
   const { korisnicko_ime, lozinka, email, privatni_racun } = req.body;
-
   const conn = await pool.getConnection();
-  await conn.query(
-    `UPDATE korisnik SET
+  try {
+    if (!lozinka) {
+      await conn.query(
+        `UPDATE korisnik SET
+      korisnicko_ime = ?,
+      email = ?,
+      privatni_racun = ?
+     WHERE id_korisnika = ?`,
+        [korisnicko_ime, email, privatni_racun, req.params.id],
+      );
+    } else {
+      const conn = await pool.getConnection();
+      await conn.query(
+        `UPDATE korisnik SET
       korisnicko_ime = ?,
       lozinka = ?,
       email = ?,
       privatni_racun = ?
      WHERE id_korisnika = ?`,
-    [korisnicko_ime, lozinka, email, privatni_racun, req.params.id],
-  );
-  conn.release();
+        [korisnicko_ime, lozinka, email, privatni_racun, req.params.id],
+      );
+    }
+  } finally {
+    conn.release();
+  }
   res.send("Korisnik updated");
 });
 
