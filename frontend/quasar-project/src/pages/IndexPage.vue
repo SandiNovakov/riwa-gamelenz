@@ -62,9 +62,7 @@
 
         <div >
           <div class="text-h5">Broj korisnika</div>
-          <div class="text-h2 text-primary">
-            {{ statistics.broj_korisnika }}
-          </div>
+          <div class="text-h2 text-primary">{{ statistics.broj_korisnika }}</div>
         </div>
 
         <div>
@@ -104,29 +102,29 @@
         <div class="text-h4 text-bold q-mb-md">
           Platforme s kojima surađujemo
         </div>
-        <div class="row justify-center q-gutter-md">
-          <div class="col-3 col-md-2">
+        <div class="row justify-around q-gutter-md">
+          <div>
             <q-img
               src="/images/platforms/playstation-logo.png"
               alt="PlayStation"
               style="width: 100px; height: auto"
             />
           </div>
-          <div class="col-3 col-md-2">
+          <div>
             <q-img
               src="/images/platforms/steam-logo.png"
               alt="Steam"
               style="width: 100px; height: auto"
             />
           </div>
-          <div class="col-3 col-md-2">
+          <div>
             <q-img
               src="/images/platforms/xbox-logo.png"
               alt="Xbox"
               style="width: 100px; height: auto"
             />
           </div>
-          <div class="col-3 col-md-2">
+          <div>
             <q-img
               src="/images/platforms/nintendo-logo.png"
               alt="Nintendo"
