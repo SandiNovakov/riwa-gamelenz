@@ -22,25 +22,15 @@ function checkLogin() {
   return LocalStorage.getItem("id_korisnika");
 }
 
-function checkAdmin() {
+async function checkAdmin() {
   const user_id = LocalStorage.getItem("id_korisnika");
 
   if (user_id === null) {
     return false;
   }
+  const res = await api.get(`/administratori/check/${user_id}`);
 
-  try {
-    const res = api.post("/check_rights", {
-      id_korisnika: user_id,
-    });
-    if (res.data.razina_prava === 1) {
-      return true;
-    } else {
-      return false;
-    }
-  } catch (err) {
-    console.error(err);
-  }
+  return res.data.isAdmin;
 }
 
 export default defineRouter(function (/* { store, ssrContext } */) {
@@ -60,14 +50,19 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
 
-  Router.beforeEach((to, from, next) => {
+  Router.beforeEach(async (to, from, next) => {
     if (to.meta.requireLogin && !checkLogin()) {
       next({
         path: "/prijava",
         query: { redirect: to.fullPath },
       });
-    } else if (to.meta.requireAdmin && !checkAdmin()) {
-      next("/");
+    } else if (to.meta.requireAdmin) {
+      const isAdmin = await checkAdmin();
+      if (!isAdmin) {
+        next({ path: "/" });
+      } else {
+        next();
+      }
     } else {
       next();
     }
