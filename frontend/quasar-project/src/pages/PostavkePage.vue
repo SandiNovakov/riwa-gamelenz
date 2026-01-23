@@ -26,7 +26,12 @@
           type="password"
           filled
           class="q-mt-md"
-          :rules="[(val) => !register.novalozinka || val === register.novalozinka || 'Lozinke se ne podudaraju',]"
+          :rules="[
+            (val) =>
+              !register.novalozinka ||
+              val === register.novalozinka ||
+              'Lozinke se ne podudaraju',
+          ]"
         />
 
         <q-input
@@ -47,7 +52,7 @@
         <q-btn
           type="submit"
           label="Spremi promjene"
-          color="warning"
+          color="primary"
           class="q-mt-lg full-width"
         />
 
@@ -62,7 +67,6 @@
     </q-card>
   </q-page>
 </template>
-
 
 <script setup>
 import { ref, onMounted } from "vue";
@@ -129,11 +133,7 @@ function confirmDelete() {
       flat: true,
     },
     persistent: true,
-  })
-    .onOk(deleteAccount)
-    .onCancel(() => {
-      router.push("/lista");
-    });
+  }).onOk(deleteAccount);
 }
 
 /* BRISANJE RAČUNA */
