@@ -15,20 +15,25 @@
 
             </div>
           </div>
-        <div class="right column q-pa-md col-9">
+        <div class="right column q-pr-lg q-pa-md col-9">
           <div class="row justify-between q-mb-md" >
+
             <div class="column">
 
               <div class="text-h3 q-mb-md">{{ imeIgrice }}</div>
               <div class="text-subtitle1">Members: {{ dodavanja }}</div>
+              <div class="text-h4 text-primary q-pr-md">{{ocjena}}</div>
 
             </div>
 
-          <div class="text-h4 text-primary q-pr-md">{{ocjena}}</div>
+            <q-btn class="self-start" color="primary" icon="add" label="Dodaj" @click.stop="onGameButtonClick(gameId)" unelevated />
 
           </div>
 
           <div class="text-subtitle1 q-mt-xl">{{ opis }}</div>
+
+          
+
         </div>
       </div>
     <h1 class="easter-egg">NO</h1>
@@ -37,7 +42,7 @@
 
 <script setup>
   import { api } from 'boot/axios'
-  import {useRoute} from 'vue-router'
+  import {useRoute, useRouter} from 'vue-router'
   import {ref, onMounted} from 'vue'
 
   var imeIgrice = ref("")
@@ -50,6 +55,7 @@
   var developer = ref("")
 
   const route = useRoute()
+  const router = useRouter()
   const gameId = route.params.id
 
   async function getGame() {
@@ -68,6 +74,10 @@
     console.error(err)
   }
 }
+
+const onGameButtonClick = (gameId) => {
+  router.push(`/dodavanje-igrice/${gameId}`);
+};
 
 onMounted(async () => {
     await getGame()
