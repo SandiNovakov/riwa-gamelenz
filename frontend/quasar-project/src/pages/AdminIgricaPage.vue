@@ -1,6 +1,8 @@
 <template>
-  <q-page padding>
-    <!-- content -->
+  <q-page padding class="flex justify-center items-start">
+    
+    
+
   </q-page>
 </template>
 
