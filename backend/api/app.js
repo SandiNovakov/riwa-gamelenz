@@ -28,7 +28,7 @@ const pool = mariadb.createPool({
   user: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  connectionLimit: 5,
+  connectionLimit: 20,
 });
 
 // KORISNIK
@@ -125,13 +125,14 @@ app.get("/administratori", async (req, res) => {
 
 app.get("/administratori/check/:id", async (req, res) => {
   const conn = await pool.getConnection();
-  const rows = await conn.query(
-    "SELECT 1 FROM korisnik WHERE id_korisnika = ? and razina_prava = 1",
-    [req.params.id],
-  );
-
-  conn.release();
-
+  try {
+    const rows = await conn.query(
+      "SELECT id_korisnika FROM korisnik WHERE id_korisnika = ? and razina_prava = 1",
+      [req.params.id],
+    );
+  } finally {
+    conn.release();
+  }
   if (rows.length === 0) {
     res.json({
       isAdmin: false,
