@@ -59,7 +59,7 @@
             class="self-center"
             label="Spremi"
             color="primary"
-            @click="createGame"
+            @click="updateGame"
           />
       </div>
 
@@ -101,17 +101,34 @@
 
   }
 
-  const getGameName = async () => {
+  const getGame = async () => {
   try {
     const res = await api.get(`/igrice/${gameId}`);
     gameName.value = res.data.naziv_igrice;
+    imeIgrice.value = res.data.naziv_igrice;
+    opis.value = res.data.opis;
+    if (res.data.datum_izdanja) {
+      const dateObj = new Date(res.data.datum_izdanja);
+      if (!isNaN(dateObj.getTime())) {
+        date.value = dateObj.toISOString().split('T')[0];
+      } else {
+        // If the date is in dd/mm/yyyy format
+        const parts = res.data.datum_izdanja.split('/');
+        if (parts.length === 3) {
+          date.value = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+      }
+    }
+    developer.value = res.data.id_developera;
+    izdavac.value = res.data.id_izdavaca;
+    zanr.value = res.data.id_zanra;
     console.log(res.data);
   } catch (err) {
     console.error(err);
   }
   };
 
-  async function createGame ()  {
+  async function updateGame ()  {
     try {
     const res = await api.put(`/igrice/${gameId}`, {
       naziv_igrice: imeIgrice.value,
@@ -134,7 +151,7 @@
 
   onMounted(() => {
     fetchOptions();
-    getGameName();
+    getGame();
   });
 </script>
 
