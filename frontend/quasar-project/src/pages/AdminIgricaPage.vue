@@ -61,6 +61,14 @@
             color="primary"
             @click="updateGame"
           />
+
+          <q-btn
+          class="self-center"
+          type="button"
+          label="Obriši Igricu"
+          color="negative"
+          @click="confirmDelete"
+          />
       </div>
 
     </div>
@@ -72,10 +80,12 @@
   import { api } from 'boot/axios'
   import {useRoute, useRouter} from 'vue-router'
   import {ref, onMounted} from 'vue'
+  import { useQuasar } from "quasar";
 
   const router = useRouter();
   const route = useRoute();
   const gameId = route.params.id;
+  const $q = useQuasar();
   const gameName = ref("Učitavanje...");
 
   const imeIgrice = ref("");
@@ -145,9 +155,34 @@
       console.error(err);
       alert("Došlo je do greške pri spremanju!");
     }
-
-    //router.push(`/pregled-igrica`);
   };
+
+function confirmDelete() {
+  $q.dialog({
+    title: "Upozorenje!",
+    message: "Jeste li sigurni da želite obrisati igricu?",
+    ok: {
+      label: "Da, obriši",
+      color: "negative",
+    },
+    cancel: {
+      label: "Ne",
+      flat: true,
+    },
+    persistent: true,
+  }).onOk(deleteGame);
+}
+
+async function deleteGame() {
+  if (!gameId) return;
+
+  try {
+    await api.delete(`/igrice/${gameId}`);
+    router.push("/pregled-igrica");
+  } catch (err) {
+    console.error("Greška pri brisanju igrice:", err);
+  }
+}
 
   onMounted(() => {
     fetchOptions();
