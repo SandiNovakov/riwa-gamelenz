@@ -146,7 +146,7 @@ app.get("/administratori/check/:id", async (req, res) => {
 app.post("/administratori", async (req, res) => {
   const conn = await pool.getConnection();
   await conn.query(
-    "UPDATE korisnik SET razina_prava = 1 WHERE id_korisnika = ?",
+    "UPDATE korisnik SET razina_prava = 0 WHERE id_korisnika = ?",
     [req.params.id],
   );
   conn.release();
