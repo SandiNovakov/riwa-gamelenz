@@ -94,8 +94,8 @@ const fetchUsers = async () => {
 
 async function onEditButtonClick(user) {
   await api.post(`/administratori/${user.id_korisnika}`);
-
-  alert(`Korisnik: ${user.korisnicko_ime}`);
+  alert(`Korisnik: ${user.korisnicko_ime} dodan kao administrator!`);
+  fetchUsers();
 }
 
 onMounted(() => {
