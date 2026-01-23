@@ -48,7 +48,7 @@ app.post("/korisnici", async (req, res) => {
 });
 
 // READ ALL korisnici
-app.get("/korisnici", async (req, res) => {
+app.get(`/korisnici`, async (req, res) => {
   const conn = await pool.getConnection();
 
   //Sandi, 23.1.2026: sada podržava pretragu po korisničkom imenu
@@ -117,10 +117,30 @@ app.delete("/korisnici/:id", async (req, res) => {
 app.get("/administratori", async (req, res) => {
   const conn = await pool.getConnection();
   await conn.query(
-    "SELECT korisnicko_ime, email, id_korisnika FROM korisnici WHERE razina_prava = 1",
+    "SELECT korisnicko_ime, email, id_korisnika FROM korisnik WHERE razina_prava = 1",
   );
   conn.release();
   res.json(rows);
+});
+
+app.get("/administratori/check/:id", async (req, res) => {
+  const conn = await pool.getConnection();
+  const rows = await conn.query(
+    "SELECT 1 FROM korisnik WHERE id_korisnika = ? and razina_prava = 1",
+    [req.params.id],
+  );
+
+  conn.release();
+
+  if (rows.length === 0) {
+    res.json({
+      isAdmin: false,
+    });
+  } else {
+    res.json({
+      isAdmin: true,
+    });
+  }
 });
 
 app.post("/administratori", async (req, res) => {
@@ -140,7 +160,7 @@ app.delete("/administratori/:id", async (req, res) => {
     [req.params.id],
   );
   conn.release();
-  res.send("Admin deleted");
+  res.send("Administratorska prava obrisana");
 });
 
 // CREATE igrice
