@@ -60,6 +60,8 @@ export default defineRouter(function (/* { store, ssrContext } */) {
       const isAdmin = await checkAdmin();
       if (!isAdmin) {
         next({ path: "/" });
+      } else {
+        next();
       }
     } else {
       next();
