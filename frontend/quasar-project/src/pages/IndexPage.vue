@@ -54,20 +54,18 @@
     <section ref="infoSection" class="second-section q-pa-xl">
       <div class="text-h3 text-bold q-mb-xl">Općeniti podaci</div>
 
-      <div class="row q-col-gutter-xl text-center">
-        <div class="col-12 col-md-4">
+      <div class="row q-col-gutter-xl text-center justify-evenly">
+        <div>
           <div class="text-h5">Broj igara</div>
           <div class="text-h2 text-primary">{{ statistics.broj_igrica }}</div>
         </div>
 
-        <div class="col-12 col-md-4">
+        <div >
           <div class="text-h5">Broj korisnika</div>
-          <div class="text-h2 text-primary">
-            {{ statistics.broj_korisnika }}
-          </div>
+          <div class="text-h2 text-primary">{{ statistics.broj_korisnika }}</div>
         </div>
 
-        <div class="col-12 col-md-4">
+        <div>
           <div class="text-h5">Broj ocjena</div>
           <div class="text-h2 text-primary">{{ statistics.broj_ocjena }}</div>
         </div>
@@ -104,29 +102,29 @@
         <div class="text-h4 text-bold q-mb-md">
           Platforme s kojima surađujemo
         </div>
-        <div class="row justify-center q-gutter-md">
-          <div class="col-3 col-md-2">
+        <div class="row justify-around q-gutter-md">
+          <div>
             <q-img
               src="/images/platforms/playstation-logo.png"
               alt="PlayStation"
               style="width: 100px; height: auto"
             />
           </div>
-          <div class="col-3 col-md-2">
+          <div>
             <q-img
               src="/images/platforms/steam-logo.png"
               alt="Steam"
               style="width: 100px; height: auto"
             />
           </div>
-          <div class="col-3 col-md-2">
+          <div>
             <q-img
               src="/images/platforms/xbox-logo.png"
               alt="Xbox"
               style="width: 100px; height: auto"
             />
           </div>
-          <div class="col-3 col-md-2">
+          <div>
             <q-img
               src="/images/platforms/nintendo-logo.png"
               alt="Nintendo"
