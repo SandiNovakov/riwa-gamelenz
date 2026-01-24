@@ -82,6 +82,7 @@ const statusOptions = [
 ];
 async function saveGame3() {
   const user_id = localStorage.getItem("id_korisnika");
+
   try {
     const res = await api.put(`/liste/${user_id}/${gameId}`, {
       id_korisnika: user_id,
@@ -91,23 +92,31 @@ async function saveGame3() {
       komentar: komentar.value,
     });
     console.log(res.data);
+
     alert("Podaci su uspješno spremljeni!");
-    router.push("/lista");
+
+    const redirect = route.query.redirect;
+
+    if (redirect) {
+      router.push(redirect);
+    } else {
+      router.push("/");
+    }
   } catch (err) {
     console.error(err);
     alert("Došlo je do greške pri spremanju!");
   }
-};
+}
 async function puni_igre() {
   const user_id = localStorage.getItem("id_korisnika");
   try {
-    const res = await api.get(`/liste/${user_id}/${gameId}`)
-    console.log(res.data)
-    ocjena.value = res.data.ocjena
-    status.value = res.data.status
-    komentar.value = res.data.komentar
- } catch (err) {
-    console.error(err)
+    const res = await api.get(`/liste/${user_id}/${gameId}`);
+    console.log(res.data);
+    ocjena.value = res.data.ocjena;
+    status.value = res.data.status;
+    komentar.value = res.data.komentar;
+  } catch (err) {
+    console.error(err);
   }
 }
 </script>
