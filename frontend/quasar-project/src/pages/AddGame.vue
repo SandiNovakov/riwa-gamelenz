@@ -41,7 +41,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { api } from "boot/axios";
-const ocjena = ref("");
+const ocjena = ref(null);
 const status = ref("planirano");
 const komentar = ref("");
 const gameName = ref("Učitavanje...");

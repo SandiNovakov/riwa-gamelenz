@@ -172,32 +172,21 @@
 </template>
 
 <script setup>
-import { api } from "boot/axios";
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useQuasar } from "quasar";
+import { api } from "boot/axios";
 
-const currentUserId = computed(() => {
-  return Number(localStorage.getItem("id_korisnika"));
-});
-
-function getStatusColor(status) {
-  if (!status) {
-    return "text-black";
-  }
-  const colors = {
-    planirano: "text-grey", // Blue for planned
-    igram: "text-green", // Green for playing
-    završeno: "text-blue", // Positive green for completed
-    odustao: "text-negative", // Negative red for dropped
-  };
-  return colors[status] || "grey";
-}
-
-const korisnik = ref([]);
-
+// Router and external utilities
 const route = useRoute();
 const router = useRouter();
+const $q = useQuasar();
 
+// Reactive data
+const korisnik = ref([]);
+const games = ref([]);
+
+// Filter data
 const filters = ref({
   naziv_igrice: "",
   izdavac: null,
@@ -207,6 +196,7 @@ const filters = ref({
   sort: "datum_dodavanja",
 });
 
+// Options for selects
 const sortOptions = ref([
   { value: "naziv_igrice", label: "Naziv igre" },
   { value: "datum_dodavanja", label: "Datum dodavanja na listu" },
@@ -223,15 +213,41 @@ const statusOptions = ref([
 const izdavaci = ref([]);
 const developeri = ref([]);
 const zanrovi = ref([]);
-const games = ref([]);
+
+// Computed properties
+const currentUserId = computed(() => {
+  return Number(localStorage.getItem("id_korisnika"));
+});
+
+// Helper functions
+function getStatusColor(status) {
+  if (!status) {
+    return "text-black";
+  }
+  const colors = {
+    planirano: "text-grey", // Blue for planned
+    igram: "text-green", // Green for playing
+    završeno: "text-blue", // Positive green for completed
+    odustao: "text-negative", // Negative red for dropped
+  };
+  return colors[status] || "grey";
+}
+
+// Data fetching functions
+async function getKorisnik() {
+  const res = await api.get(`/korisnici/${route.params.id}`);
+  korisnik.value = res.data;
+}
 
 const fetchOptions = async () => {
+  // privremene varijable za opcije...
   const [izdRes, devRes, zanrRes] = await Promise.all([
     api.get("/izdavaci"),
     api.get("/developeri"),
     api.get("/zanrovi"),
   ]);
 
+  // ovdje se nadodaje default opcija i onda je to konacna vrijednost.
   izdavaci.value = [
     { id_izdavaca: null, naziv_izdavaca: "— Sve —" },
     ...izdRes.data,
@@ -278,15 +294,39 @@ const applyFilters = () => {
   );
 };
 
+// Event handlers
 const onGameClick = (game) => {
   router.push(`/igrica/${game.id_igrice}`);
 };
 
 const onEditButtonClick = (game) => {
-  router.push(`/uredivanje-igrice/${game.id_igrice}`);
+  router.push({
+    path: `/uredivanje-igrice/${game.id_igrice}`,
+    query: { redirect: router.currentRoute.value.path },
+  });
 };
 
+function onPostavkeButtonClick() {
+  router.push("/upravljanje-racunom");
+}
+
 async function onDeleteButtonClick(game) {
+  $q.dialog({
+    title: "Upozorenje!",
+    message: "Jeste li sigurni da želite obrisati igricu?",
+    ok: {
+      label: "Da, obriši",
+      color: "negative",
+    },
+    cancel: {
+      label: "Ne",
+      flat: true,
+    },
+    persistent: true,
+  }).onOk(() => removeGame(game));
+}
+
+async function removeGame(game) {
   await api.delete(`/liste/${korisnik.value.id_korisnika}/${game.id_igrice}`);
   fetchGames(
     filters.value.naziv_igrice,
@@ -298,15 +338,7 @@ async function onDeleteButtonClick(game) {
   );
 }
 
-async function getKorisnik() {
-  const res = await api.get(`/korisnici/${route.params.id}`);
-  korisnik.value = res.data;
-}
-
-function onPostavkeButtonClick() {
-  router.push("/upravljanje-racunom");
-}
-
+// Lifecycle hooks
 onMounted(async () => {
   await getKorisnik();
   fetchOptions();
