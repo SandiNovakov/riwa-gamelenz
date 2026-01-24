@@ -20,10 +20,10 @@ Pogledajte upute "Postavljanje radnog okruženja" i "Pokretanje servera".
 
 1. Klonirajte repozitorij: `git clone https://github.com/SandiNovakov/riwa-gamelenz`.
 2. Pozicionairajte se u početni folder.
-3. Pokrenite skriptu za postavljanje: `./setup.sh`.
+3. U Git Bash-u pokrenite skriptu za postavljanje: `./setup.sh`.
 4. Unesite korisničko ime i lozinku za spajanje na bazu. Korisničko ime jednako je bazi na koju se spajate.
 5. Pričekajte dok skripta instalira potrebne npm pakete.
 
 ## Pokretanje servera
 
-1. Nakon pokretanja skripte `setup.sh`, potrebno je pokrenuti skriptu `./start.sh`.
+1. Nakon postavljanja, potrebno je pokrenuti skriptu `./start.sh`.
