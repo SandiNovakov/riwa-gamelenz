@@ -41,8 +41,8 @@
 <script setup>
 import { api } from "boot/axios";
 import { useRoute, useRouter } from "vue-router";
-import { ref, onMounted, onBeforeUnmount } from "vue";
-import { fetchImages, revokeImageUrls } from "src/composables/useImages";
+import { ref, onMounted } from "vue";
+import { getImage } from "src/utils/images";
 
 var imeIgrice = ref("");
 var dodavanja = ref("");
@@ -81,12 +81,7 @@ const onGameButtonClick = (gameId) => {
 
 onMounted(async () => {
   await getGame();
-  const images = await fetchImages("igrica", gameId, "cover");
-  image.value = images[0]?.url || null;
-});
-
-onBeforeUnmount(() => {
-  revokeImageUrls(image);
+  image.value = await getImage("igrica", gameId, "cover");
 });
 </script>
 

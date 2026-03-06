@@ -184,9 +184,9 @@
 
 <script setup>
 import { api } from "boot/axios";
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { fetchImages, revokeImageUrls } from "src/composables/useImages";
+import { getImage } from "src/utils/images";
 
 const router = useRouter();
 const isAdminUser = ref(false);
@@ -265,8 +265,7 @@ const fetchGames = async (
 
   await Promise.all(
     games.value.map(async (game) => {
-      const imageData = await fetchImages("igrica", game.id_igrice, "cover");
-      game.image = imageData.length > 0 ? imageData[0].url : null;
+      game.image = await getImage("igrica", game.id_igrice, "cover");
     }),
   );
 };
@@ -326,10 +325,6 @@ const checkAdmin = async () => {
     isAdminUser.value = false;
   }
 };
-
-onBeforeUnmount(() => {
-  revokeImageUrls(games.value.map((game) => ({ url: game.image })));
-});
 </script>
 
 <style>

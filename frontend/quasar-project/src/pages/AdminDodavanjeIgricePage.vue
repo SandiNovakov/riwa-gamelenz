@@ -49,12 +49,11 @@
 
         <q-input filled v-model="opis" type="textarea" label="Opis" />
 
-        <q-file
-          filled
+        <ImageUploader
           v-model="slika"
-          label="Odaberi sliku"
-          accept=".jpg,.jpeg,.png,.gif"
-          class="q-mb-md"
+          label="Odaberi sliku za igricu"
+          preview-width="300px"
+          preview-height="200px"
         />
 
         <q-btn
@@ -72,6 +71,8 @@
 import { api } from "boot/axios";
 import { useRouter } from "vue-router";
 import { ref, onMounted } from "vue";
+import { saveImage } from "src/utils/images";
+import ImageUploader from "components/ImageUploader.vue";
 
 const router = useRouter();
 
@@ -109,17 +110,8 @@ async function createGame() {
     });
 
     if (slika.value) {
-      const formData = new FormData();
-      formData.append("veza_tablica", "igrica");
-      formData.append("id_veze", res.data.id);
-      formData.append("tip_slike", "cover");
-      formData.append("image", slika.value);
-
-      await api.post("/images", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await saveImage("igrica", res.data.id, "cover", slika.value);
     }
-
     console.log(res.data);
     alert("Igrica uspješno spremljena!");
     router.push("/pregled-igrica");

@@ -970,192 +970,141 @@ app.get("/lista_igrica/:id_korisnika", async (req, res) => {
   }
 });
 
-//uploadanje slike
-app.post("/images", upload.single("image"), async (req, res) => {
-  try {
-    console.log("=== IMAGE UPLOAD START ===");
-    console.log("Request body:", req.body);
-    console.log(
-      "Request file:",
-      req.file
-        ? {
-            originalname: req.file.originalname,
-            mimetype: req.file.mimetype,
-            size: req.file.size,
-          }
-        : "NO FILE",
-    );
+// ==================== SIMPLIFIED IMAGE API ====================
 
-    const { veza_tablica, id_veze, tip_slike } = req.body;
-
-    console.log("Extracted fields:", { veza_tablica, id_veze, tip_slike });
-
-    if (!req.file) {
-      console.log("ERROR: No file");
-      return res.status(400).json({ error: "Image file required" });
-    }
-
-    if (!veza_tablica || !id_veze || !tip_slike) {
-      console.log("ERROR: Missing fields");
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    const mime_type = req.file.mimetype;
-    const data = req.file.buffer;
-    const size = req.file.size;
-
-    console.log("Attempting database insert...");
-    console.log("SQL params:", [
-      veza_tablica,
-      id_veze,
-      tip_slike,
-      mime_type,
-      `[buffer ${data.length} bytes]`,
-      size,
-    ]);
-
-    const sql = `
-      INSERT INTO slike
-      (veza_tablica, id_veze, tip_slike, mime_type, data, size)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `;
-
-    // Don't destructure, just get result directly
-    const conn = await pool.getConnection();
-    const result = await conn.execute(sql, [
-      veza_tablica,
-      id_veze,
-      tip_slike,
-      mime_type,
-      data,
-      size,
-    ]);
-
-    console.log("Database insert successful:", result);
-    console.log("Insert ID:", result.insertId);
-
-    res.json({
-      message: "uspio",
-      id: Number(result.insertId),
-    });
-  } catch (err) {
-    console.error("=== IMAGE UPLOAD ERROR ===");
-    console.error("Error name:", err.name);
-    console.error("Error message:", err.message);
-    console.error("Full error:", err);
-    console.error("Stack:", err.stack);
-
-    res.status(500).json({
-      error: err.message,
-      details: err.toString(),
-    });
-  }
-});
-//update slike
-app.put("/images/:id", upload.single("image"), async (req, res) => {
-  let conn;
-  try {
-    const { id } = req.params;
-    const { veza_tablica, id_veze, tip_slike } = req.body;
-
-    if (!req.file) {
-      return res.status(400).json({ error: "Image file required" });
-    }
-
-    const sql = `
-      UPDATE slike 
-      SET veza_tablica = ?, 
-          id_veze = ?, 
-          tip_slike = ?, 
-          mime_type = ?, 
-          data = ?, 
-          size = ?
-      WHERE id_slike = ?
-    `;
-
-    conn = await pool.getConnection();
-    const result = await conn.execute(sql, [
-      veza_tablica,
-      id_veze,
-      tip_slike,
-      req.file.mimetype,
-      req.file.buffer,
-      req.file.size,
-      id,
-    ]);
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ error: "Image not found" });
-    }
-
-    res.json({
-      message: "Image updated successfully",
-      id: parseInt(id),
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  } finally {
-    if (conn) conn.release();
-  }
-});
-
-// Dohvati sve ID-eve slika koji odgovaraju parametrima
+// GET image by composite key (veza_tablica + id_veze + tip_slike)
 app.get("/images", async (req, res) => {
   let conn;
   try {
     const { veza_tablica, id_veze, tip_slike } = req.query;
 
-    if (!veza_tablica || !id_veze) {
+    if (!veza_tablica || !id_veze || !tip_slike) {
       return res.status(400).json({
-        error: "veza_tablica and id_veze are required",
+        error: "veza_tablica, id_veze and tip_slike are required",
       });
     }
 
-    let sql = `SELECT id_slike FROM slike WHERE veza_tablica = ? AND id_veze = ?`;
-    const params = [veza_tablica, id_veze];
-
-    if (tip_slike) {
-      sql += ` AND tip_slike = ?`;
-      params.push(tip_slike);
-    }
-
-    conn = await pool.getConnection();
-    const rows = await conn.execute(sql, params);
-
-    // Vrati samo niz ID-eva
-    const ids = rows.map((row) => row.id_slike);
-    res.json(ids);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  } finally {
-    if (conn) conn.release();
-  }
-});
-
-// Dohvati stvarnu sliku prema ID-u
-app.get("/images/:id", async (req, res) => {
-  let conn;
-  try {
-    const { id } = req.params;
-
     conn = await pool.getConnection();
     const rows = await conn.execute(
-      "SELECT mime_type, data FROM slike WHERE id_slike = ?",
-      [id],
+      `SELECT id_slike, mime_type, data 
+       FROM slike 
+       WHERE veza_tablica = ? AND id_veze = ? AND tip_slike = ?`,
+      [veza_tablica, id_veze, tip_slike],
     );
 
     if (rows.length === 0) {
       return res.status(404).json({ error: "Image not found" });
     }
 
-    res.setHeader("Content-Type", rows[0].mime_type);
-    res.send(rows[0].data);
+    // Return both ID and image data
+    const image = rows[0];
+    res.json({
+      id: Number(image.id_slike),
+      mime_type: image.mime_type,
+      data: image.data.toString("base64"), // or send as buffer depending on frontend
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   } finally {
     if (conn) conn.release();
   }
 });
+
+// POST (create) or PUT (update) - single endpoint that handles both
+app.post("/images", upload.single("image"), async (req, res) => {
+  let conn;
+  try {
+    const { veza_tablica, id_veze, tip_slike } = req.body;
+
+    if (!req.file || !veza_tablica || !id_veze || !tip_slike) {
+      return res.status(400).json({ error: "Missing required fields or file" });
+    }
+
+    conn = await pool.getConnection();
+
+    // Check if image already exists
+    const existing = await conn.execute(
+      `SELECT id_slike FROM slike WHERE veza_tablica = ? AND id_veze = ? AND tip_slike = ?`,
+      [veza_tablica, id_veze, tip_slike],
+    );
+
+    let result;
+    if (existing.length > 0) {
+      // UPDATE existing image
+      result = await conn.execute(
+        `UPDATE slike 
+         SET mime_type = ?, data = ?, size = ?
+         WHERE id_slike = ?`,
+        [
+          req.file.mimetype,
+          req.file.buffer,
+          req.file.size,
+          existing[0].id_slike,
+        ],
+      );
+      console.log("Image updated, ID:", existing[0].id_slike);
+    } else {
+      // INSERT new image
+      result = await conn.execute(
+        `INSERT INTO slike (veza_tablica, id_veze, tip_slike, mime_type, data, size)
+         VALUES (?, ?, ?, ?, ?, ?)`,
+        [
+          veza_tablica,
+          id_veze,
+          tip_slike,
+          req.file.mimetype,
+          req.file.buffer,
+          req.file.size,
+        ],
+      );
+      console.log("Image created, ID:", result.insertId);
+    }
+
+    // Return the image ID
+    const imageId =
+      existing.length > 0
+        ? Number(existing[0].id_slike)
+        : Number(result.insertId);
+
+    res.json({
+      message: "success",
+      id: imageId,
+    });
+  } catch (err) {
+    console.error("Image upload error:", err);
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.release();
+  }
+});
+
+// DELETE image
+app.delete("/images", async (req, res) => {
+  let conn;
+  try {
+    const { veza_tablica, id_veze, tip_slike } = req.query;
+
+    if (!veza_tablica || !id_veze || !tip_slike) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    conn = await pool.getConnection();
+    const result = await conn.execute(
+      `DELETE FROM slike WHERE veza_tablica = ? AND id_veze = ? AND tip_slike = ?`,
+      [veza_tablica, id_veze, tip_slike],
+    );
+
+    res.json({
+      message: "Image deleted",
+      affected: result.affectedRows,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.release();
+  }
+});
+
 app.listen(3000, () => {
   console.log("API running on \x1b[36mhttp://localhost:3000/\x1b[0m");
 });
