@@ -2,6 +2,8 @@ const express = require("express");
 const mariadb = require("mariadb");
 const path = require("path");
 const cors = require("cors");
+const multer = require("multer");
+const upload = multer({ storage: multer.memoryStorage() });
 
 //require("dotenv").config({
 //  path: path.resolve(__dirname, "..", ".env"),
@@ -191,14 +193,17 @@ app.post("/igrice", async (req, res) => {
   } = req.body;
 
   const conn = await pool.getConnection();
-  await conn.query(
+  const result = await conn.execute(
     `INSERT INTO igrica
      (naziv_igrice, opis, datum_izdanja, id_izdavaca, id_developera, id_zanra)
      VALUES (?, ?, ?, ?, ?, ?)`,
     [naziv_igrice, opis, datum_izdanja, id_izdavaca, id_developera, id_zanra],
   );
   conn.release();
-  res.send("Igrica created");
+  res.json({
+    message: "Igrica stvorena",
+    id: Number(result.insertId),
+  });
 });
 
 // READ ALL igrice
@@ -962,6 +967,181 @@ app.get("/lista_igrica/:id_korisnika", async (req, res) => {
     res.status(500).json({ message: "Greška na serveru" });
   } finally {
     conn.release();
+  }
+});
+
+//uploadanje slike
+app.post("/images", upload.single("image"), async (req, res) => {
+  try {
+    console.log("=== IMAGE UPLOAD START ===");
+    console.log("Request body:", req.body);
+    console.log(
+      "Request file:",
+      req.file
+        ? {
+            originalname: req.file.originalname,
+            mimetype: req.file.mimetype,
+            size: req.file.size,
+          }
+        : "NO FILE",
+    );
+
+    const { veza_tablica, id_veze, tip_slike } = req.body;
+
+    console.log("Extracted fields:", { veza_tablica, id_veze, tip_slike });
+
+    if (!req.file) {
+      console.log("ERROR: No file");
+      return res.status(400).json({ error: "Image file required" });
+    }
+
+    if (!veza_tablica || !id_veze || !tip_slike) {
+      console.log("ERROR: Missing fields");
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const mime_type = req.file.mimetype;
+    const data = req.file.buffer;
+    const size = req.file.size;
+
+    console.log("Attempting database insert...");
+    console.log("SQL params:", [
+      veza_tablica,
+      id_veze,
+      tip_slike,
+      mime_type,
+      `[buffer ${data.length} bytes]`,
+      size,
+    ]);
+
+    const sql = `
+      INSERT INTO slike
+      (veza_tablica, id_veze, tip_slike, mime_type, data, size)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+    // Don't destructure, just get result directly
+    const conn = await pool.getConnection();
+    const result = await conn.execute(sql, [
+      veza_tablica,
+      id_veze,
+      tip_slike,
+      mime_type,
+      data,
+      size,
+    ]);
+
+    console.log("Database insert successful:", result);
+    console.log("Insert ID:", result.insertId);
+
+    res.json({
+      message: "uspio",
+      id: Number(result.insertId),
+    });
+  } catch (err) {
+    console.error("=== IMAGE UPLOAD ERROR ===");
+    console.error("Error name:", err.name);
+    console.error("Error message:", err.message);
+    console.error("Full error:", err);
+    console.error("Stack:", err.stack);
+
+    res.status(500).json({
+      error: err.message,
+      details: err.toString(),
+    });
+  }
+});
+//update slike
+app.put("/images/:id", upload.single("image"), async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { veza_tablica, id_veze, tip_slike } = req.body;
+
+    if (!req.file) {
+      return res.status(400).json({ error: "Image file required" });
+    }
+
+    const sql = `
+      UPDATE slike 
+      SET veza_tablica = ?, 
+          id_veze = ?, 
+          tip_slike = ?, 
+          mime_type = ?, 
+          data = ?, 
+          size = ?
+      WHERE id_slike = ?
+    `;
+
+    const [result] = await db.execute(sql, [
+      veza_tablica,
+      id_veze,
+      tip_slike,
+      req.file.mimetype,
+      req.file.buffer,
+      req.file.size,
+      id,
+    ]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Image not found" });
+    }
+
+    res.json({
+      message: "Image updated successfully",
+      id: parseInt(id),
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Dohvati sve ID-eve slika koji odgovaraju parametrima
+app.get("/images", async (req, res) => {
+  try {
+    const { veza_tablica, id_veze, tip_slike } = req.query;
+
+    if (!veza_tablica || !id_veze) {
+      return res.status(400).json({
+        error: "veza_tablica and id_veze are required",
+      });
+    }
+
+    let sql = `SELECT id_slike FROM slike WHERE veza_tablica = ? AND id_veze = ?`;
+    const params = [veza_tablica, id_veze];
+
+    if (tip_slike) {
+      sql += ` AND tip_slike = ?`;
+      params.push(tip_slike);
+    }
+
+    const [rows] = await db.execute(sql, params);
+
+    // Vrati samo niz ID-eva
+    const ids = rows.map((row) => row.id_slike);
+    res.json(ids);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Dohvati stvarnu sliku prema ID-u
+app.get("/images/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [rows] = await db.execute(
+      "SELECT mime_type, data FROM slike WHERE id_slike = ?",
+      [id],
+    );
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Image not found" });
+    }
+
+    res.setHeader("Content-Type", rows[0].mime_type);
+    res.send(rows[0].data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
