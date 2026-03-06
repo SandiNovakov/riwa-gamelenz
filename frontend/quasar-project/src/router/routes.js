@@ -44,7 +44,7 @@ const routes = [
         meta: { requireAdmin: true },
       },
       {
-        path: "admin/igrica",
+        path: "admin/igrica/:id",
         component: () => import("pages/AdminIgricaPage.vue"),
         meta: { requireAdmin: true },
       },
