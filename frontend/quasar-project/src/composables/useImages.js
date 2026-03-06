@@ -33,7 +33,14 @@ export async function fetchImages(veza_tablica, id_veze, tip_slike = null) {
 
 // Helper for cleanup
 export function revokeImageUrls(images) {
+  if (!images) return;
+
+  // Handle single object
+  if (!Array.isArray(images)) {
+    images = [images];
+  }
+
   images.forEach((img) => {
-    if (img.url) URL.revokeObjectURL(img.url);
+    if (img?.url) URL.revokeObjectURL(img.url);
   });
 }
