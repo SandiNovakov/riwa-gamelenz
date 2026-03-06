@@ -123,6 +123,24 @@
         @click="onGameClick(game)"
       >
         <q-card-section>
+          <!-- Image display -->
+          <div class="row justify-center q-mb-md">
+            <q-img
+              v-if="game.image"
+              :src="game.image"
+              style="height: 150px; width: 120px"
+              class="rounded-borders"
+              fit="cover"
+            />
+            <div
+              v-else
+              class="flex flex-center bg-grey-3 rounded-borders"
+              style="height: 150px; width: 120px"
+            >
+              <q-icon name="image" size="48px" color="grey-6" />
+            </div>
+          </div>
+
           <div class="text-h6 q-mb-xs">
             {{ game.naziv_igrice }}
           </div>
@@ -166,8 +184,9 @@
 
 <script setup>
 import { api } from "boot/axios";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
+import { fetchImages, revokeImageUrls } from "src/composables/useImages";
 
 const router = useRouter();
 const isAdminUser = ref(false);
@@ -243,6 +262,13 @@ const fetchGames = async (
   const query = new URLSearchParams(params).toString();
   const res = await api.get(`/browse?${query}`);
   games.value = res.data;
+
+  await Promise.all(
+    games.value.map(async (game) => {
+      const imageData = await fetchImages("igrica", game.id_igrice, "cover");
+      game.image = imageData.length > 0 ? imageData[0].url : null;
+    }),
+  );
 };
 
 const applyFilters = () => {
@@ -300,6 +326,10 @@ const checkAdmin = async () => {
     isAdminUser.value = false;
   }
 };
+
+onBeforeUnmount(() => {
+  revokeImageUrls(games.value.map((game) => ({ url: game.image })));
+});
 </script>
 
 <style>

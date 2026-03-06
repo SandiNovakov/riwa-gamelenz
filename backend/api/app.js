@@ -1053,6 +1053,7 @@ app.post("/images", upload.single("image"), async (req, res) => {
 });
 //update slike
 app.put("/images/:id", upload.single("image"), async (req, res) => {
+  let conn;
   try {
     const { id } = req.params;
     const { veza_tablica, id_veze, tip_slike } = req.body;
@@ -1072,7 +1073,8 @@ app.put("/images/:id", upload.single("image"), async (req, res) => {
       WHERE id_slike = ?
     `;
 
-    const [result] = await db.execute(sql, [
+    conn = await pool.getConnection();
+    const result = await conn.execute(sql, [
       veza_tablica,
       id_veze,
       tip_slike,
@@ -1092,11 +1094,14 @@ app.put("/images/:id", upload.single("image"), async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.release();
   }
 });
 
 // Dohvati sve ID-eve slika koji odgovaraju parametrima
 app.get("/images", async (req, res) => {
+  let conn;
   try {
     const { veza_tablica, id_veze, tip_slike } = req.query;
 
@@ -1114,22 +1119,27 @@ app.get("/images", async (req, res) => {
       params.push(tip_slike);
     }
 
-    const [rows] = await db.execute(sql, params);
+    conn = await pool.getConnection();
+    const rows = await conn.execute(sql, params);
 
     // Vrati samo niz ID-eva
     const ids = rows.map((row) => row.id_slike);
     res.json(ids);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.release();
   }
 });
 
 // Dohvati stvarnu sliku prema ID-u
 app.get("/images/:id", async (req, res) => {
+  let conn;
   try {
     const { id } = req.params;
 
-    const [rows] = await db.execute(
+    conn = await pool.getConnection();
+    const rows = await conn.execute(
       "SELECT mime_type, data FROM slike WHERE id_slike = ?",
       [id],
     );
@@ -1142,9 +1152,10 @@ app.get("/images/:id", async (req, res) => {
     res.send(rows[0].data);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  } finally {
+    if (conn) conn.release();
   }
 });
-
 app.listen(3000, () => {
   console.log("API running on \x1b[36mhttp://localhost:3000/\x1b[0m");
 });
