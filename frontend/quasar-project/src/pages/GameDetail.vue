@@ -25,7 +25,7 @@
             class="self-start"
             color="primary"
             icon="add"
-            label="ne"
+            label="Dodaj"
             @click.stop="onGameButtonClick(gameId)"
             unelevated
           />

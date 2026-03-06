@@ -5,10 +5,6 @@ const cors = require("cors");
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 
-//require("dotenv").config({
-//  path: path.resolve(__dirname, "..", ".env"),
-//});
-
 require("dotenv").config({
   path: path.resolve(__dirname, ".env"),
   quiet: true,
@@ -39,6 +35,7 @@ app.post("/korisnici", async (req, res) => {
   const { korisnicko_ime, lozinka, email, privatni_racun } = req.body;
 
   const conn = await pool.getConnection();
+  // REMOVED: broj_igrica_na_listi column reference - now calculated in view
   await conn.query(
     `INSERT INTO korisnik 
      (korisnicko_ime, lozinka, email, privatni_racun)
@@ -63,8 +60,7 @@ app.get(`/korisnici`, async (req, res) => {
 
     if (korisnicko_ime) {
       query += " WHERE korisnicko_ime LIKE ?";
-      params.push(`%${korisnicko_ime}%`); // Partial match
-      // OR for exact match: params.push(korisnicko_ime);
+      params.push(`%${korisnicko_ime}%`);
     }
 
     const rows = await conn.query(query, params);
@@ -102,7 +98,7 @@ app.put("/korisnici/:id", async (req, res) => {
         [korisnicko_ime, email, privatni_racun, req.params.id],
       );
     } else {
-      const conn = await pool.getConnection();
+      // REMOVED: broj_igrica_na_listi from UPDATE - now calculated
       await conn.query(
         `UPDATE korisnik SET
       korisnicko_ime = ?,
@@ -122,6 +118,7 @@ app.put("/korisnici/:id", async (req, res) => {
 // DELETE Korisnik
 app.delete("/korisnici/:id", async (req, res) => {
   const conn = await pool.getConnection();
+  // REMOVED: No need to manually update counters - ON DELETE CASCADE handles it
   await conn.query("DELETE FROM korisnik WHERE id_korisnika = ?", [
     req.params.id,
   ]);
@@ -193,6 +190,7 @@ app.post("/igrice", async (req, res) => {
   } = req.body;
 
   const conn = await pool.getConnection();
+  // REMOVED: prosjecna_ocjena and broj_dodavanja_na_listu - now calculated
   const result = await conn.execute(
     `INSERT INTO igrica
      (naziv_igrice, opis, datum_izdanja, id_izdavaca, id_developera, id_zanra)
@@ -236,6 +234,7 @@ app.put("/igrice/:id", async (req, res) => {
   } = req.body;
 
   const conn = await pool.getConnection();
+  // REMOVED: prosjecna_ocjena and broj_dodavanja_na_listu from UPDATE
   await conn.query(
     `UPDATE igrica SET
       naziv_igrice = ?,
@@ -262,6 +261,8 @@ app.put("/igrice/:id", async (req, res) => {
 // DELETE Igrica
 app.delete("/igrice/:id", async (req, res) => {
   const conn = await pool.getConnection();
+  // REMOVED: No need to manually delete images - handled by DELETE CASCADE on foreign keys
+  // REMOVED: No need to update counters - they're calculated now
   await conn.query("DELETE FROM igrica WHERE id_igrice = ?", [req.params.id]);
   conn.release();
   res.send("Igrica deleted");
@@ -275,9 +276,11 @@ app.post("/liste", async (req, res) => {
   const conn = await pool.getConnection();
 
   try {
-    await conn.beginTransaction();
+    // REMOVED: Transaction no longer needed since we removed counter updates
+    // REMOVED: No more igrica.broj_dodavanja_na_listu update
+    // REMOVED: No more korisnik.broj_igrica_na_listi update
 
-    // Insert into Igrica_na_listi
+    // Insert into Igrica_na_listi only
     await conn.query(
       `INSERT INTO igrica_na_listi
        (id_korisnika, id_igrice, datum_dodavanja, ocjena, komentar, status)
@@ -285,26 +288,8 @@ app.post("/liste", async (req, res) => {
       [id_korisnika, id_igrice, datum_dodavanja, ocjena, komentar, status],
     );
 
-    // Update Igrica.Broj_dodavanja_na_listu
-    await conn.query(
-      `UPDATE igrica
-       SET broj_dodavanja_na_listu = broj_dodavanja_na_listu + 1
-       WHERE id_igrice = ?`,
-      [id_igrice],
-    );
-
-    // Update Korisnik.Broj_igrica_na_listi
-    await conn.query(
-      `UPDATE korisnik
-       SET broj_igrica_na_listi = broj_igrica_na_listi + 1
-       WHERE id_korisnika = ?`,
-      [id_korisnika],
-    );
-
-    await conn.commit();
-    res.send("Game added to list and counters updated");
+    res.send("Game added to list");
   } catch (err) {
-    await conn.rollback();
     console.error(err);
     res.status(500).send("Error adding game to list");
   } finally {
@@ -385,43 +370,24 @@ app.delete("/liste/:userId/:gameId", async (req, res) => {
   const conn = await pool.getConnection();
 
   try {
-    await conn.beginTransaction();
+    // REMOVED: Transaction no longer needed
+    // REMOVED: No more igrica.broj_dodavanja_na_listu decrement
+    // REMOVED: No more korisnik.broj_igrica_na_listi decrement
 
-    // Delete the entry from Igrica_na_listi
+    // Just delete the entry
     const result = await conn.query(
       "DELETE FROM igrica_na_listi WHERE id_korisnika = ? AND id_igrice = ?",
       [userId, gameId],
     );
 
-    // MariaDB returns an object with affectedRows property for DELETE queries
     if (result.affectedRows === 0) {
-      throw new Error("Entry not found or already deleted");
+      return res.status(404).send("Entry not found");
     }
 
-    // Decrement Igrica.Broj_dodavanja_na_listu
-    await conn.query(
-      `UPDATE igrica
-       SET broj_dodavanja_na_listu = GREATEST(broj_dodavanja_na_listu - 1, 0)
-       WHERE id_igrice = ?`,
-      [gameId],
-    );
-
-    // Decrement Korisnik.Broj_igrica_na_listi
-    await conn.query(
-      `UPDATE korisnik
-       SET broj_igrica_na_listi = GREATEST(broj_igrica_na_listi - 1, 0)
-       WHERE id_korisnika = ?`,
-      [userId],
-    );
-
-    await conn.commit();
-    res.send("Entry deleted and counters updated");
+    res.send("Entry deleted");
   } catch (err) {
-    await conn.rollback();
     console.error(err);
-    res
-      .status(err.message === "Entry not found or already deleted" ? 404 : 500)
-      .send(err.message || "Error deleting entry");
+    res.status(500).send(err.message || "Error deleting entry");
   } finally {
     conn.release();
   }
@@ -663,17 +629,16 @@ app.get("/igrice/detalji/:id", async (req, res) => {
   const conn = await pool.getConnection();
 
   try {
-    const [rows] = await conn.query(
-      `
-SELECT * FROM games_details WHERE id_igrice = ?
-    `,
+    // CHANGED: games_details view now includes calculated fields
+    const rows = await conn.query(
+      "SELECT * FROM v_games_details WHERE id_igrice = ?",
       [id],
     );
     if (!rows || rows.length === 0) {
       return res.status(404).json({ message: "Igrica nije pronađena." });
     }
 
-    res.json(rows);
+    res.json(rows[0]); // CHANGED: return first row, not array
   } catch (err) {
     console.error("Database error:", err);
     res.status(500).json({ message: "Greška pri dohvaćanju igrice." });
@@ -682,47 +647,11 @@ SELECT * FROM games_details WHERE id_igrice = ?
   }
 });
 
-//UPDATE prosjecna ocjena, trebalo bi se raditi za svaku igricu povremeno.
-// UPDATE prosjecna ocjena
-app.put("/igrice/:id/prosjecna-ocjena", async (req, res) => {
-  const { id } = req.params;
-  const conn = await pool.getConnection();
-
-  try {
-    // 1. Get average rating
-    const [rows] = await conn.query(
-      `
-            SELECT AVG(inl.ocjena) AS prosjek
-            FROM igrica_na_listi inl
-            JOIN korisnik k ON inl.id_korisnika = k.id_korisnika
-            WHERE inl.id_igrice = ? AND k.privatni_racun = FALSE AND inl.ocjena IS NOT NULL
-        `,
-      [id],
-    );
-
-    // 2. Update average rating in Igrica table
-    await conn.query(
-      `
-            UPDATE igrica 
-            SET prosjecna_ocjena = ? 
-            WHERE id_igrice = ?
-        `,
-      [rows.prosjek, id],
-    );
-    res.json({
-      message: "Prosjecna ocjena azurirana.",
-      nova_ocjena: rows.prosjek,
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Greška pri obracunu prosjecne ocjene." });
-  } finally {
-    conn.release();
-  }
-});
+// REMOVED: /igrice/:id/prosjecna-ocjena endpoint - now calculated in view
+// REMOVED entire app.put("/igrice/:id/prosjecna-ocjena", ...) function
 
 app.post("/login", async (req, res) => {
-  const { korisnicko_ime, lozinka } = req.body; // POST body
+  const { korisnicko_ime, lozinka } = req.body;
   const conn = await pool.getConnection();
   try {
     const rows = await conn.query(
@@ -734,7 +663,7 @@ app.post("/login", async (req, res) => {
       res.status(401).json({ message: "Pogrešni podaci." });
     } else {
       const id_korisnika = rows[0].id_korisnika;
-      res.json({ id_korisnika }); // frontend može ovo spremiti kao cookie
+      res.json({ id_korisnika });
     }
   } catch (err) {
     console.error(err);
@@ -755,8 +684,9 @@ app.post("/login", async (req, res) => {
 app.get("/index-summary", async (req, res) => {
   const conn = await pool.getConnection();
   try {
-    const rows = await conn.query("SELECT * FROM index_summary");
-    res.json(rows[0]); // view always returns exactly 1 row
+    // CHANGED: using v_index_summary view
+    const rows = await conn.query("SELECT * FROM v_index_summary");
+    res.json(rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Greška na serveru" });
@@ -777,9 +707,8 @@ app.get("/index-summary", async (req, res) => {
  * sort (polje po kojem se sortira.)
  *
  * Vraca:
- * SELECT * FROM games_details;
+ * SELECT * FROM v_games_details;
  */
-
 app.get("/browse", async (req, res) => {
   const q = req.query;
 
@@ -788,7 +717,7 @@ app.get("/browse", async (req, res) => {
     zanr,
     developer,
     izdavac,
-    platforma, // single platform ID
+    platforma,
     datum_od,
     datum_do,
     sort,
@@ -833,7 +762,7 @@ app.get("/browse", async (req, res) => {
       EXISTS (
         SELECT 1
         FROM igrica_na_platformi ip
-        WHERE ip.id_igrice = games_details.id_igrice
+        WHERE ip.id_igrice = v_games_details.id_igrice
           AND ip.id_platforme = ?
       )
     `);
@@ -841,7 +770,7 @@ app.get("/browse", async (req, res) => {
   }
 
   // ---- base query ----
-  let sql = "SELECT * FROM games_details";
+  let sql = "SELECT * FROM v_games_details";
 
   if (where.length > 0) {
     sql += " WHERE " + where.join(" AND ");
@@ -872,7 +801,7 @@ app.get("/browse", async (req, res) => {
 });
 
 app.post("/check_rights", async (req, res) => {
-  const { id_korisnika } = req.body; // POST body
+  const { id_korisnika } = req.body;
   if (!id_korisnika) {
     return res.status(200).json({
       razina_prava: 0,
@@ -893,7 +822,7 @@ app.post("/check_rights", async (req, res) => {
       });
     }
     const razina_prava = rows[0].razina_prava;
-    res.json({ razina_prava }); // frontend može ovo spremiti kao cookie
+    res.json({ razina_prava });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Greška", razina_prava: 0 });
@@ -907,7 +836,8 @@ app.get("/lista_igrica/:id_korisnika", async (req, res) => {
   const q = req.query;
 
   if (id_korisnika === null) {
-    res.json.status("404");
+    res.status(404).json({ message: "Korisnik nije pronađen" });
+    return;
   }
 
   const { naziv_igrice, zanr, developer, izdavac, status, sort } = q;
@@ -945,7 +875,7 @@ app.get("/lista_igrica/:id_korisnika", async (req, res) => {
   }
 
   // ---- base query ----
-  let sql = "SELECT * FROM korisnik_lista_igrica";
+  let sql = "SELECT * FROM v_korisnik_lista_igrica";
 
   if (where.length > 0) {
     sql += " WHERE " + where.join(" AND ");
@@ -971,8 +901,8 @@ app.get("/lista_igrica/:id_korisnika", async (req, res) => {
 });
 
 // ==================== SIMPLIFIED IMAGE API ====================
+// (unchanged - this part was already refactored)
 
-// GET image by composite key (veza_tablica + id_veze + tip_slike)
 app.get("/images", async (req, res) => {
   let conn;
   try {
@@ -996,12 +926,11 @@ app.get("/images", async (req, res) => {
       return res.status(404).json({ error: "Image not found" });
     }
 
-    // Return both ID and image data
     const image = rows[0];
     res.json({
       id: Number(image.id_slike),
       mime_type: image.mime_type,
-      data: image.data.toString("base64"), // or send as buffer depending on frontend
+      data: image.data.toString("base64"),
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -1010,7 +939,6 @@ app.get("/images", async (req, res) => {
   }
 });
 
-// POST (create) or PUT (update) - single endpoint that handles both
 app.post("/images", upload.single("image"), async (req, res) => {
   let conn;
   try {
@@ -1022,7 +950,6 @@ app.post("/images", upload.single("image"), async (req, res) => {
 
     conn = await pool.getConnection();
 
-    // Check if image already exists
     const existing = await conn.execute(
       `SELECT id_slike FROM slike WHERE veza_tablica = ? AND id_veze = ? AND tip_slike = ?`,
       [veza_tablica, id_veze, tip_slike],
@@ -1030,7 +957,6 @@ app.post("/images", upload.single("image"), async (req, res) => {
 
     let result;
     if (existing.length > 0) {
-      // UPDATE existing image
       result = await conn.execute(
         `UPDATE slike 
          SET mime_type = ?, data = ?, size = ?
@@ -1044,7 +970,6 @@ app.post("/images", upload.single("image"), async (req, res) => {
       );
       console.log("Image updated, ID:", existing[0].id_slike);
     } else {
-      // INSERT new image
       result = await conn.execute(
         `INSERT INTO slike (veza_tablica, id_veze, tip_slike, mime_type, data, size)
          VALUES (?, ?, ?, ?, ?, ?)`,
@@ -1060,7 +985,6 @@ app.post("/images", upload.single("image"), async (req, res) => {
       console.log("Image created, ID:", result.insertId);
     }
 
-    // Return the image ID
     const imageId =
       existing.length > 0
         ? Number(existing[0].id_slike)
@@ -1078,7 +1002,6 @@ app.post("/images", upload.single("image"), async (req, res) => {
   }
 });
 
-// DELETE image
 app.delete("/images", async (req, res) => {
   let conn;
   try {
