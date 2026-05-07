@@ -11,4 +11,4 @@ SELECT
 	, i.id_izdavaca AS id_izdavaca
 	, i.id_developera AS id_developera
 FROM
-	igrica_na_listi il JOIN igrica i ON il.id_igrice = i.igrice;
+	igrica_na_listi il JOIN igrica i ON il.id_igrice = i.id_igrice;

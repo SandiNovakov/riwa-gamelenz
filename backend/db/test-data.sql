@@ -179,3 +179,11 @@ SELECT i.id_igrice, p.id_platforme
 FROM igrica i, platforma p
 WHERE i.naziv_igrice = 'Baldur''s Gate 3'
   AND p.naziv_platforme IN ('PC', 'PlayStation', 'Xbox');
+
+INSERT INTO korisnik(korisnicko_ime, lozinka, email, razina_prava) VALUES(
+'tvoja_stara',
+'tvoja_stara',
+'tvoja.stara@gmail.com'
+1);
+
+
