@@ -1,5 +1,20 @@
 # TO DO
 
+## Postavljanje platforme na igricu
+- Novo polje u stranicama za dodavanje igrice u katalog i izmjenu podataka o igrici na katalogu
+- Select list, vuče sve platforme.
+- Ali dopušta postavljanje više vrijednosti.
+- Viditi da li može automatski neki separator npr. "," ili ":".
+- Dodati u API mogućnost upisa podataka u platforme itd. Transakcija ili nešto...
+
+## Korisničko ime
+- Dodati prikaz korisničkog imena gore desno ili negdje uvijek. Čisto da znamo tko smo. Korisničko ime + email.
+
+## Korisničko ime + email
+- Na page-eve di se prikazuje samo korisničko ime, dodati i prikaz email-a uz korisničko ime.
+- Na mockupove napraviti isto.
+---
+
 # Početna stranica. ✓
 
 - Dostupna svima.
