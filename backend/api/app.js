@@ -22,6 +22,4 @@ app.use(
 // Routes
 app.use("/", require(path.join(__dirname, "routes")));
 
-app.listen(3000, () => {
-  console.log("API running on \x1b[36mhttp://localhost:3000/\x1b[0m");
-});
+module.exports = app;
