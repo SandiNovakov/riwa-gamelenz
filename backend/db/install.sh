@@ -9,9 +9,6 @@ echo
 
 SCRIPTS=(
     "install.sql"
-    "views.sql"
-    "v_korisnik_lista_igrica.sql"
-    "test-data.sql"
 )
 
 for SCRIPT in "${SCRIPTS[@]}"; do
@@ -31,4 +28,3 @@ for SCRIPT in "${SCRIPTS[@]}"; do
 done
 
 echo "Sve skripte uspješno su dovršene!"
-

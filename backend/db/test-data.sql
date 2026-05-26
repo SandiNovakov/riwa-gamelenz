@@ -180,10 +180,12 @@ FROM igrica i, platforma p
 WHERE i.naziv_igrice = 'Baldur''s Gate 3'
   AND p.naziv_platforme IN ('PC', 'PlayStation', 'Xbox');
 
+-- ADMIN KORISNIK
+
 INSERT INTO korisnik(korisnicko_ime, lozinka, email, razina_prava) VALUES(
-'tvoja_stara',
-'tvoja_stara',
-'tvoja.stara@gmail.com'
+'gladmin',
+'gladmin',
+'gladmin@gamelenz.com'
 1);
 
 
