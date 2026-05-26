@@ -15,4 +15,9 @@ router.get("/browse", igriceController.browse);
 //detalji o igrici
 router.get("/igrice/detalji/:id", igriceController.getDetails);
 
+router.put(
+  "/igrice/:id/prosjecna-ocjena",
+  igriceController.updateProsjecnaOcjena,
+);
+
 module.exports = router;

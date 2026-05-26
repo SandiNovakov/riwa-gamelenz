@@ -31,6 +31,43 @@ exports.create = async (req, res) => {
   }
 };
 
+exports.updateProsjecnaOcjena = async (req, res) => {
+  const { id } = req.params;
+  const conn = await pool.getConnection();
+
+  try {
+    // 1. Get average rating
+    const [rows] = await conn.query(
+      `
+            SELECT AVG(inl.ocjena) AS prosjek
+            FROM igrica_na_listi inl
+            JOIN korisnik k ON inl.id_korisnika = k.id_korisnika
+            WHERE inl.id_igrice = ? AND k.privatni_racun = FALSE AND inl.ocjena IS NOT NULL
+        `,
+      [id],
+    );
+
+    // 2. Update average rating in Igrica table
+    await conn.query(
+      `
+            UPDATE igrica 
+            SET prosjecna_ocjena = ? 
+            WHERE id_igrice = ?
+        `,
+      [rows.prosjek, id],
+    );
+    res.json({
+      message: "Prosjecna ocjena azurirana.",
+      nova_ocjena: rows.prosjek,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Greška pri obracunu prosjecne ocjene." });
+  } finally {
+    conn.release();
+  }
+};
+
 exports.getAll = async (req, res) => {
   let conn;
   try {

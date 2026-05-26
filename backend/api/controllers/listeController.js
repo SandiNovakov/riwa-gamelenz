@@ -19,13 +19,13 @@ exports.addToList = async (req, res) => {
     await conn.beginTransaction();
 
     // Igrica vec postoji
-    const [existing] = await conn.query(
+    const [rows] = await conn.query(
       `SELECT * FROM igrica_na_listi
        WHERE id_korisnika = ? AND id_igrice = ?`,
       [id_korisnika, id_igrice],
     );
 
-    if (existing.length > 0) {
+    if (rows && rows.length > 0) {
       await conn.rollback();
 
       return res.status(409).json({
@@ -77,10 +77,14 @@ exports.addToList = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("Error in addToList:", err);
+    //console.error("Error in addToList:", err);
 
     if (conn) {
-      await conn.rollback();
+      try {
+        await conn.rollback();
+      } catch (rbErr) {
+        //console.error(rbErr);
+      }
     }
 
     if (err.code === "ER_DUP_ENTRY" || err.code === 1062) {
@@ -91,7 +95,11 @@ exports.addToList = async (req, res) => {
       });
     }
 
-    if (err.code === "ER_NO_REFERENCED_ROW" || err.code === 1452) {
+    if (
+      err.code === "ER_NO_REFERENCED_ROW" ||
+      err.code === "ER_NO_REFERENCED_ROW_2" ||
+      err.code === 1452
+    ) {
       return res.status(400).json({
         error: "INVALID_REFERENCE",
         message: "The user or game doesn't exist",
