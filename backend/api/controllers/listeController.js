@@ -4,7 +4,6 @@ exports.addToList = async (req, res) => {
   const datum_dodavanja = new Date().toISOString().split("T")[0];
   const { id_korisnika, id_igrice, ocjena, komentar, status } = req.body;
 
-  // Validate required fields
   if (!id_korisnika || !id_igrice) {
     return res.status(400).json({
       error: "Missing required fields",
@@ -13,16 +12,22 @@ exports.addToList = async (req, res) => {
   }
 
   let conn;
+
   try {
     conn = await pool.getConnection();
 
-    // First check if the game is already in the user's list
+    await conn.beginTransaction();
+
+    // Igrica vec postoji
     const [existing] = await conn.query(
-      "SELECT * FROM igrica_na_listi WHERE id_korisnika = ? AND id_igrice = ?",
+      `SELECT * FROM igrica_na_listi
+       WHERE id_korisnika = ? AND id_igrice = ?`,
       [id_korisnika, id_igrice],
     );
 
-    if (existing) {
+    if (existing.length > 0) {
+      await conn.rollback();
+
       return res.status(409).json({
         error: "DUPLICATE_ENTRY",
         message: "This game is already in your list",
@@ -30,7 +35,7 @@ exports.addToList = async (req, res) => {
       });
     }
 
-    // If not exists, insert the new entry
+    // Insert
     await conn.query(
       `INSERT INTO igrica_na_listi
        (id_korisnika, id_igrice, datum_dodavanja, ocjena, komentar, status)
@@ -45,14 +50,39 @@ exports.addToList = async (req, res) => {
       ],
     );
 
+    // Update igrica brojac
+    await conn.query(
+      `UPDATE igrica
+       SET broj_dodavanja_na_listu = broj_dodavanja_na_listu + 1
+       WHERE id_igrice = ?`,
+      [id_igrice],
+    );
+
+    // Update korisnik brojac
+    await conn.query(
+      `UPDATE korisnik
+       SET broj_igrica_na_listi = broj_igrica_na_listi + 1
+       WHERE id_korisnika = ?`,
+      [id_korisnika],
+    );
+
+    await conn.commit();
+
     res.status(201).json({
       message: "Game added to list successfully",
-      data: { id_korisnika, id_igrice, datum_dodavanja },
+      data: {
+        id_korisnika,
+        id_igrice,
+        datum_dodavanja,
+      },
     });
   } catch (err) {
     console.error("Error in addToList:", err);
 
-    // Handle duplicate key error specifically (code 1062 for MySQL)
+    if (conn) {
+      await conn.rollback();
+    }
+
     if (err.code === "ER_DUP_ENTRY" || err.code === 1062) {
       return res.status(409).json({
         error: "DUPLICATE_ENTRY",
@@ -61,7 +91,6 @@ exports.addToList = async (req, res) => {
       });
     }
 
-    // Handle foreign key constraints
     if (err.code === "ER_NO_REFERENCED_ROW" || err.code === 1452) {
       return res.status(400).json({
         error: "INVALID_REFERENCE",
@@ -69,7 +98,6 @@ exports.addToList = async (req, res) => {
       });
     }
 
-    // Generic error
     res.status(500).json({
       error: "DATABASE_ERROR",
       message: "Error adding game to list. Please try again.",
@@ -162,22 +190,68 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
   const { userId, gameId } = req.params;
+
   let conn;
+
   try {
     conn = await pool.getConnection();
+
+    await conn.beginTransaction();
+
+    // Delete from igrica_na_listi
     const result = await conn.query(
-      "DELETE FROM igrica_na_listi WHERE id_korisnika = ? AND id_igrice = ?",
+      `DELETE FROM igrica_na_listi
+       WHERE id_korisnika = ? AND id_igrice = ?`,
       [userId, gameId],
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).send("Entry not found");
+      await conn.rollback();
+
+      return res.status(404).json({
+        error: "NOT_FOUND",
+        message: "Entry not found or already deleted",
+      });
     }
 
-    res.send("Entry deleted");
+    // Decrement igrica counter
+    await conn.query(
+      `UPDATE igrica
+       SET broj_dodavanja_na_listu =
+         GREATEST(broj_dodavanja_na_listu - 1, 0)
+       WHERE id_igrice = ?`,
+      [gameId],
+    );
+
+    // Decrement korisnik counter
+    await conn.query(
+      `UPDATE korisnik
+       SET broj_igrica_na_listi =
+         GREATEST(broj_igrica_na_listi - 1, 0)
+       WHERE id_korisnika = ?`,
+      [userId],
+    );
+
+    await conn.commit();
+
+    res.status(200).json({
+      message: "Entry deleted successfully",
+      data: {
+        userId,
+        gameId,
+      },
+    });
   } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message || "Error deleting entry");
+    console.error("Error in delete:", err);
+
+    if (conn) {
+      await conn.rollback();
+    }
+
+    res.status(500).json({
+      error: "DATABASE_ERROR",
+      message: err.message || "Error deleting entry",
+    });
   } finally {
     if (conn) conn.release();
   }
