@@ -185,7 +185,7 @@ WHERE i.naziv_igrice = 'Baldur''s Gate 3'
 INSERT INTO korisnik(korisnicko_ime, lozinka, email, razina_prava) VALUES(
 'gladmin',
 'gladmin',
-'gladmin@gamelenz.com'
+'gladmin@gamelenz.com',
 1);
 
 

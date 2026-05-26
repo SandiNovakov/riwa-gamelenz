@@ -12,10 +12,10 @@ DROP TABLE if EXISTS
   , igrica_na_platformi;
 
 DROP VIEW IF EXISTS
-	 v_index_summary,
-	 v_games_details,
+	 index_summary,
+	 games_details,
 	 v_korisnik,
-	 v_korisnik_lista_igrica;
+	 korisnik_lista_igrica;
 
 SET foreign_key_checks = 1;
 
@@ -146,7 +146,7 @@ CREATE INDEX idx_ip_platforma ON igrica_na_platformi(id_platforme);
 -- END INDEXES --
 
 -- START VIEWS --
-CREATE VIEW v_index_summary AS
+CREATE VIEW index_summary AS
 SELECT 
     (SELECT FORMAT(COUNT(*), 0) FROM korisnik) AS broj_korisnika,
     (SELECT FORMAT(COUNT(*), 0) FROM igrica) AS broj_igrica,
@@ -172,7 +172,7 @@ FROM (
     LIMIT 1
 ) AS r;
 
-CREATE VIEW v_games_details AS
+CREATE VIEW games_details AS
 SELECT
     i.id_igrice,
     i.naziv_igrice,
@@ -211,16 +211,7 @@ LEFT JOIN (
     GROUP BY id_igrice
 ) game_stats ON i.id_igrice = game_stats.id_igrice;
 
-CREATE VIEW v_korisnik AS
-SELECT 
-    k.*,
-    FORMAT(COUNT(inl.id_igrice), 0) AS broj_igrica_na_listi
-FROM korisnik k
-LEFT JOIN igrica_na_listi inl ON k.id_korisnika = inl.id_korisnika
-GROUP BY k.id_korisnika;
-
-
-CREATE OR REPLACE VIEW v_korisnik_lista_igrica AS
+CREATE OR REPLACE VIEW korisnik_lista_igrica AS
 SELECT 
 	  il.id_igrice AS id_igrice
 	, il.id_korisnika AS id_korisnika
