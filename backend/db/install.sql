@@ -14,7 +14,6 @@ DROP TABLE if EXISTS
 DROP VIEW IF EXISTS
 	 index_summary,
 	 games_details,
-	 v_korisnik,
 	 korisnik_lista_igrica;
 
 SET foreign_key_checks = 1;
