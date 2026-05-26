@@ -49,24 +49,28 @@ CREATE TABLE zanr
   (
      id_zanra    INT PRIMARY KEY auto_increment,
      naziv_zanra VARCHAR(32) NOT NULL UNIQUE
+     opis		  VARCHAR(4000)
   );
 
 CREATE TABLE izdavac
   (
      id_izdavaca    INT PRIMARY KEY auto_increment,
-     naziv_izdavaca VARCHAR(64) NOT NULL UNIQUE
+     naziv_izdavaca VARCHAR(64) NOT NULL UNIQUE,
+     opis		     VARCHAR(4000)
   );
 
 CREATE TABLE developer
   (
      id_developera    INT PRIMARY KEY auto_increment,
-     naziv_developera VARCHAR(64) NOT NULL UNIQUE
+     naziv_developera VARCHAR(64) NOT NULL UNIQUE,
+     opis		       VARCHAR(4000)
   );
 
 CREATE TABLE platforma
   (
      id_platforme    INT PRIMARY KEY auto_increment,
-     naziv_platforme VARCHAR(64) NOT NULL UNIQUE
+     naziv_platforme VARCHAR(64) NOT NULL UNIQUE,
+     opis		      VARCHAR(4000)
   );
 
 CREATE TABLE igrica_na_listi
