@@ -3,18 +3,16 @@
    CLEANUP
    ========================= */
 
-DELETE FROM igrica_na_platformi;
-DELETE FROM platforma;
-DELETE FROM igrica;
-DELETE FROM developer;
-DELETE FROM izdavac;
-DELETE FROM zanr;
-
-ALTER TABLE zanr AUTO_INCREMENT = 1;
-ALTER TABLE izdavac AUTO_INCREMENT = 1;
-ALTER TABLE developer AUTO_INCREMENT = 1;
-ALTER TABLE platforma AUTO_INCREMENT = 1;
-ALTER TABLE igrica AUTO_INCREMENT = 1;
+SET foreign_key_checks = 0;
+TRUNCATE TABLE korisnik;
+TRUNCATE TABLE igrica;
+TRUNCATE TABLE igrica_na_listi;
+TRUNCATE TABLE zanr;
+TRUNCATE TABLE izdavac;
+TRUNCATE TABLE developer;
+TRUNCATE TABLE platforma;
+TRUNCATE TABLE igrica_na_platformi;
+SET foreign_key_checks = 1;
 
 /* =========================
    ZANROVI

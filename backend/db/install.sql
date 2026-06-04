@@ -48,7 +48,7 @@ CREATE TABLE igrica
 CREATE TABLE zanr
   (
      id_zanra    INT PRIMARY KEY auto_increment,
-     naziv_zanra VARCHAR(32) NOT NULL UNIQUE
+     naziv_zanra VARCHAR(32) NOT NULL UNIQUE,
      opis		  VARCHAR(4000)
   );
 
