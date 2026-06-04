@@ -22,7 +22,7 @@ echo
 echo "================================="
 echo "Instaliranje paketa za API..."
 echo "================================="
-npm install # This installs ALL dependencies from package.json
+npm install
 cd ../..
 
 # Frontend setup
@@ -33,7 +33,27 @@ echo "================================="
 cd frontend/quasar-project
 npm install -g @quasar/cli
 npm install
+
+echo
+echo "================================="
+echo "Generiranje Quasar produkcijskog builda..."
+echo "================================="
+quasar build
 cd ../..
+
+echo
+echo "================================="
+echo "Generiranje SSL certifikata za HTTPS..."
+echo "================================="
+# MSYS_NO_PATHCONV=1 rješava problem s putanjama u Git Bashu na Windowsima
+# -subj prosljeđuje lažne podatke da OpenSSL ne ispituje pitanja u terminalu
+MSYS_NO_PATHCONV=1 openssl req -x509 -newkey rsa:4048 -nodes \
+    -keyout key.pem \
+    -out cert.pem \
+    -days 365 \
+    -subj "/C=HR/ST=Zupanija/L=Grad/O=Faks/OU=Smjer/CN=localhost"
+
+echo "Certifikati uspješno kreirani (key.pem i cert.pem)!"
 
 echo
 echo "================================="

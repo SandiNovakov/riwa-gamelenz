@@ -40,6 +40,16 @@
             <q-item-label caption>{{ link.caption }}</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item clickable v-ripple href="/help.pdf" target="_blank">
+          <q-item-section avatar>
+            <q-icon name="help" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Pomoć</q-item-label>
+            <q-item-label caption>Pomoć s radom</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -73,6 +83,12 @@ const baseLinks = [
     title: "Pregled igrica",
     caption: "Pretraživanje svih igrica",
     icon: "search",
+    link: "/pregled-igrica",
+  },
+  {
+    title: "Pomoć",
+    caption: "Pomoć s radom",
+    icon: "help",
     link: "/pregled-igrica",
   },
 ];
